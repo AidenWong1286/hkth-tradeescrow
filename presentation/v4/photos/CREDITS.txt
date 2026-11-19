@@ -1,0 +1,7 @@
+Photos from Unsplash (Unsplash License), converted to monochrome.
+cover_ship: https://images.unsplash.com/photo-1568347877321-f8935c7dc5a3
+yard_grid: https://images.unsplash.com/photo-1494412685616-a5d310fbb07d
+port_wide: https://images.unsplash.com/photo-1494412651409-8963ce7935a7
+ship_top: https://images.unsplash.com/photo-1724597500306-a4cbb7d1324e
+hk_harbour: https://images.unsplash.com/photo-1522613901383-3e9dfac316a7
+yard_diag: https://images.unsplash.com/photo-1494412519320-aa613dfb7738

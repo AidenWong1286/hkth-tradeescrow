@@ -1,0 +1,117 @@
+{
+ "notes": {
+  "1": "(20 s) Title. At the interim we showed that the prototype runs. Today we answer the research question: does conditional escrow make HK–Thailand settlement safer and more auditable, and what does it cost? Four parts: why escrow, the design principles, the evidence, and our verdict.",
+  "2": "(40 s) At the interim we showed the prototype running. Since then we did three things. First, an independent review found a real flaw: the ledger page showed every account to every role, even though all 47 tests passed. We fixed it and added 30 tests. Second, we built a proper evaluation: five hypotheses and a fair comparison. That cut our own efficiency claim from 57% to 28.6%. Third, we measured the cost we had ignored: who has to fund the escrow.",
+  "3": "(45 s) The interim compared escrow only with open account. That is an unfair comparison: banks already sell a safe product, the letter of credit. Read the rows: escrow gives the exporter L/C-like certainty, replaces manual document examination with machine matching plus human review, and leaves one shared audit trail. But look at the red dot: the importer must fund in cash up front. That trade-off is what Part 4 measures.",
+  "4": "(40 s) Why build this at all, if HKMA is already tokenising money? Because the programmes solve different layers: data (CargoX), money (Ensemble, e-HKD), and interbank rails (EnsembleTX, mBridge). None of them, as publicly described, holds funds against trade conditions and routes exceptions to people. That missing middle layer is what we prototyped.",
+  "5": "(35 s) Our research question splits into five hypotheses, each with a test that could fail. H1 efficiency, H2 no unsafe release, H3 exceptions go to people, H4 auditability without over-sharing, and H5 — the uncomfortable one — the cost of pre-funding must be measured, not ignored. Part 3 tests them; Part 4 gives the verdicts.",
+  "6": "(45 s) The core design problem is the oracle problem: code cannot see a ship. So we made the trust boundary explicit. On the left, three accountable parties issue attestations. The engine can verify that an attestation is for this trade, is the latest revision, is fresh, and comes from the right role. It must trust that the goods were really loaded and the documents are genuine. That is why every attestation carries an issuer, a trade ID, a digest and an expiry — and why the engine re-checks them at the moment of release.",
+  "7": "(50 s) At the interim we listed the seven guard conditions. Here is why each exists. Each row is an attack someone could try, the check that stops it, and the named test that actually tried it. For example: get documents approved, then quietly revise the invoice — the approval is pinned to a digest, so the revision voids it (NC-05). Or clear a compliance hold without re-screening (NC-11). All seventeen attempts were refused and the money did not move.",
+  "8": "(40 s) Beyond the gates, we specified five invariants that must hold after every command, whatever happens: money is conserved, nothing executes twice, anything not explicitly allowed is refused, each role sees only its own data, and every command — accepted or refused — is chained so tampering is detectable. The bottom line of each card is how we checked it. The state diagram is in backup B2.",
+  "9": "(2–3 min) LIVE DEMO. Run: python -m ui_flask.app. (1) Open the console as Bank H operations, pick TC-001 in the player at the bottom and press ▶ (or Space; C = cinema mode). Point at the 7-segment guard ring filling in and the HKD token moving once. (2) Switch role to Regulator, press Try to release funds → RBAC_DENIED, show the refusal in the journal. (3) TC-002: invoice HKD 245,000 vs contract 250,000 → Under Review; resolve. (4) TC-003: watchlist hit → Frozen; try refund → refused. Fallback: recorded video, then backup B6.",
+  "10": "(50 s) Four kinds of evidence, each answering a different doubt. The suite checks the behaviour we specified. The unsafe-release matrix tries seventeen attacks directly. The random stress test fires 5,312 random commands at 200 trades and checks money is conserved after every one. And mutation testing asks: would our tests even notice a bug? We broke the code fourteen ways; thirteen were caught. Margin note: these are our own tests on synthetic data.",
+  "11": "(45 s) This is the most important thing we learned. At the interim, all 47 tests passed — and yet the ledger web page showed every account to every role, because our tests checked the engine, not the page. An independent review caught it. We moved the access rule server-side and added 30 tests that log in as each role. The same review found that our bug-seeding harness was reporting 14 out of 14 by accident; the honest number is 13. Green tests are not the same as a safe system.",
+  "12": "(45 s) Here are the verdicts, and notice they are not all 'pass'. H2, H3 and H4 are supported — within our simulation and our role model. H1, efficiency, is only supported as a modelled result. And H5 is confirmed as a real trade-off: escrow takes the exporter's risk to zero but commits the importer's cash for longer. Part 4 looks at H1 and H5 in detail.",
+  "13": "(45 s) H1 in detail. Our first figure said escrow removes 57% of manual settlement tasks. That was unfair: the baseline ends when the Thai bank credits the exporter, but our prototype stops earlier, at Bank H. When we add the steps the escrow would still need to reach the Thai bank, the reduction is 7 to 5, about 29%. Smaller, but the direction holds in all three scenarios. That is the number we stand by — and it is still a model, not a measurement.",
+  "14": "(45 s) H5 in detail. Each row is a timeline from contract. Red is the exporter shipped but unpaid and unsecured; teal is the importer's cash committed. Under open account with a 30-day term, the exporter is exposed for 37 days. Under escrow, the exporter's risk drops to zero — but the importer's cash is locked for 7.5 days instead of 2.5. So escrow is not free efficiency; it is a risk transfer. A real product would need a bank to finance or pay interest on the escrow balance.",
+  "15": "(45 s) Instead of a list of limitations, here is what would have to be true for this to work in the real world. Attestations must be honest — that needs signed electronic bills of lading or CargoX-type data. Settlement must be final across the border — that needs an interbank leg such as EnsembleTX. The legal status of tokenised escrow needs an opinion in both jurisdictions. Someone has to finance the wait. And honestly: a single database could run our rules; a shared ledger only adds value with independent bank and regulator nodes.",
+  "16": "(30 s) Our answer is a qualified yes. Safer and auditable: supported. More efficient: somewhat, about 29% fewer manual tasks, as a model. Not free: it moves the financing cost to the importer, and its real-world value depends on trusted data, settlement finality and law. Next steps are on the slide. Thank you — questions. Backups B1–B9 hold the full diagrams, permissions, the e-HKD leg and sources.",
+  "17": "",
+  "18": "",
+  "19": "",
+  "20": "",
+  "21": "",
+  "22": "",
+  "23": "",
+  "24": "",
+  "25": "",
+  "26": ""
+ },
+ "links": {
+  "4": [
+   [
+    "Project CargoX",
+    "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2026/05/20260507-7/"
+   ],
+   [
+    "Ensemble / e-HKD",
+    "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2025/10/20251028-4/"
+   ],
+   [
+    "EnsembleTX · mBridge",
+    "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2026/11/20261102-5/"
+   ]
+  ],
+  "15": [
+   [
+    "   EnsembleTX",
+    "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2026/11/20261102-5/"
+   ],
+   [
+    "   CargoX",
+    "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2026/05/20260507-7/"
+   ]
+  ],
+  "25": [
+   [
+    "EXIM Thailand",
+    "https://www.exim.go.th/EN/Newsroom/newsactivities/EXIM-BANK-%E0%B8%A5%E0%B8%87%E0%B8%99%E0%B8%B2%E0%B8%A1-MOU-%E0%B8%81%E0%B8%9A%E0%B8%AD%E0%B8%87%E0%B8%84%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%AA%E0%B8%A0%E0%B8%B2%E0%B8%9E%E0%B8%92%E0%B8%99%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%84%E0%B8%B2%E0%B8%AE%E0%B8%AD%E0%B8%87%E0%B8%81%E0%B8%87-%E0%B8%AA%E0%B8%99%E0%B8%9A%E0%B8%AA.aspx"
+   ],
+   [
+    "ADB",
+    "https://www.adb.org/news/demand-trade-finance-rise-amid-supply-chain-realignment-adb-report"
+   ],
+   [
+    "HKMA · CargoX report",
+    "https://cdi.hkma.gov.hk/wp-content/uploads/Project_CargoX_Recommendation_Report.pdf"
+   ],
+   [
+    "HKMA · CargoX pilot",
+    "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2026/05/20260507-7/"
+   ],
+   [
+    "HKMA · Project Ensemble",
+    "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2025/11/20251113-3/"
+   ],
+   [
+    "HKMA · EnsembleTX",
+    "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2026/11/20261102-5/"
+   ],
+   [
+    "HKMA · e-HKD Phase 2",
+    "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2025/10/20251028-4/"
+   ],
+   [
+    "BIS",
+    "https://www.bis.org/project/mbridge"
+   ]
+  ]
+ },
+ "footers": {
+  "2": "HK–TH TradeEscrow   ·   FTEC3002 Group 1   ·   Final presentation",
+  "3": "HK–TH TradeEscrow   ·   FTEC3002 Group 1   ·   Final presentation",
+  "4": "HK–TH TradeEscrow   ·   FTEC3002 Group 1   ·   Final presentation",
+  "5": "HK–TH TradeEscrow   ·   FTEC3002 Group 1   ·   Final presentation",
+  "6": "HK–TH TradeEscrow   ·   Presented by  Chow Ka Shing",
+  "7": "HK–TH TradeEscrow   ·   Presented by  Chow Ka Shing",
+  "8": "HK–TH TradeEscrow   ·   Presented by  Chow Ka Shing",
+  "9": "HK–TH TradeEscrow   ·   Presented by  WONG HO MING",
+  "10": "HK–TH TradeEscrow   ·   Presented by  WONG HO MING",
+  "11": "HK–TH TradeEscrow   ·   Presented by  WONG HO MING",
+  "12": "HK–TH TradeEscrow   ·   Presented by  WONG HO MING",
+  "13": "HK–TH TradeEscrow   · Presented by  SO LAI CHUN",
+  "14": "HK–TH TradeEscrow   · Presented by  SO LAI CHUN",
+  "15": "HK–TH TradeEscrow   · Presented by  SO LAI CHUN",
+  "16": "HK–TH TradeEscrow   · Presented by  SO LAI CHUN",
+  "17": "HK–TH TradeEscrow   ·   FTEC3002 Group 1   ·   Final presentation",
+  "18": "HK–TH TradeEscrow   ·   FTEC3002 Group 1   ·   Final presentation",
+  "19": "HK–TH TradeEscrow   ·   FTEC3002 Group 1   ·   Final presentation",
+  "20": "HK–TH TradeEscrow   ·   FTEC3002 Group 1   ·   Final presentation",
+  "21": "HK–TH TradeEscrow   ·   FTEC3002 Group 1   ·   Final presentation",
+  "22": "HK–TH TradeEscrow   ·   FTEC3002 Group 1   ·   Final presentation",
+  "23": "HK–TH TradeEscrow   ·   FTEC3002 Group 1   ·   Final presentation",
+  "24": "HK–TH TradeEscrow   ·   FTEC3002 Group 1   ·   Final presentation",
+  "25": "HK–TH TradeEscrow   ·   FTEC3002 Group 1   ·   Final presentation",
+  "26": "HK–TH TradeEscrow   ·   FTEC3002 Group 1   ·   Final presentation"
+ }
+}

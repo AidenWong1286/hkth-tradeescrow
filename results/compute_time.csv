@@ -1,0 +1,4 @@
+scenario,reps,median_ms,min_ms,max_ms,note
+TC-001,30,4.06,3.79,7.19,WALL-CLOCK engine compute incl. fresh in-memory DB setup; not business settlement time
+TC-002R,30,5.05,4.92,6.94,WALL-CLOCK engine compute incl. fresh in-memory DB setup; not business settlement time
+TC-003C,30,5.25,5.11,6.5,WALL-CLOCK engine compute incl. fresh in-memory DB setup; not business settlement time

@@ -1,0 +1,29 @@
+digraph G { rankdir=LR; size="13.33,7.5"; ratio=fill; bgcolor="white"; nodesep=0.6; ranksep=1.25; pad=0.25;
+node [shape=box style="rounded,filled" fontname="Helvetica-Bold" fontsize=24 fontcolor=white penwidth=0 margin="0.25,0.12"];
+edge [fontname="Helvetica" fontsize=17 color="#334155" fontcolor="#334155" penwidth=1.8 arrowsize=1.1];
+start [shape=circle label="" width=0.35 style=filled fillcolor="#14213d"];
+labelloc=t; fontname="Helvetica-Bold"; fontsize=24; label="Escrow state machine — 6 states, 15 permitted transitions (all others rejected)";
+Created [label="Created" fillcolor="#64748b"];
+Pending [label="Pending" fillcolor="#b7791f"];
+Under_Review [label="Under Review" fillcolor="#c2410c"];
+Frozen [label="Frozen" fillcolor="#1d4ed8"];
+Released [label="Released" fillcolor="#15803d"];
+Refunded_Terminated [label="Refunded/Terminated" fillcolor="#7c3aed"];
+start -> Created [label="fund + creation\nKYC/AML PASS"];
+Created -> Pending [label="shipment attested"];
+Created -> Under_Review [label="doc FAIL / dispute" color="#b91c1c" fontcolor="#b91c1c" style=dashed];
+Pending -> Under_Review [label="doc FAIL / dispute" color="#b91c1c" fontcolor="#b91c1c" style=dashed];
+Created -> Frozen [label="AML alert / hold" color="#b91c1c" fontcolor="#b91c1c" style=dashed];
+Pending -> Frozen [label="AML alert / hold" color="#b91c1c" fontcolor="#b91c1c" style=dashed];
+Under_Review -> Frozen [label="AML alert / hold" color="#b91c1c" fontcolor="#b91c1c" style=dashed];
+Pending -> Released [label="GUARD: shipment ∧ docs(current)\n∧ KYC×2 (fresh) ∧ no hold" penwidth=3.5 color="#15803d" fontcolor="#15803d" fontname="Helvetica-Bold"];
+Under_Review -> Pending [label="reviewer revalidates"];
+Under_Review -> Created [label="revalidated,\nnot shipped"];
+Under_Review -> Refunded_Terminated [label="reviewer terminates" color="#b91c1c" fontcolor="#b91c1c" style=dashed];
+Frozen -> Pending [label="compliance clears"];
+Frozen -> Created [label="clears\n(not shipped)"];
+Frozen -> Under_Review [label="clears\n(docs failing)" color="#b91c1c" fontcolor="#b91c1c" style=dashed];
+Frozen -> Refunded_Terminated [label="compliance terminates" color="#b91c1c" fontcolor="#b91c1c" style=dashed];
+{rank=same; Pending; Under_Review;}
+{rank=same; Released; Refunded_Terminated;}
+}

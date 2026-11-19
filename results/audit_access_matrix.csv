@@ -1,0 +1,64 @@
+role,capability,expected,actual,obeyed
+IMPORTER (own trade),view,1,1,True
+IMPORTER (own trade),amount,1,1,True
+IMPORTER (own trade),doc_bodies,1,1,True
+IMPORTER (own trade),compliance_reasons,0,0,True
+IMPORTER (own trade),audit,1,1,True
+IMPORTER (own trade),guard,0,0,True
+IMPORTER (own trade),commercial_terms,1,1,True
+IMPORTER (other trade),view,0,0,True
+IMPORTER (other trade),amount,0,0,True
+IMPORTER (other trade),doc_bodies,0,0,True
+IMPORTER (other trade),compliance_reasons,0,0,True
+IMPORTER (other trade),audit,0,0,True
+IMPORTER (other trade),guard,0,0,True
+IMPORTER (other trade),commercial_terms,0,0,True
+EXPORTER,view,1,1,True
+EXPORTER,amount,1,1,True
+EXPORTER,doc_bodies,1,1,True
+EXPORTER,compliance_reasons,0,0,True
+EXPORTER,audit,1,1,True
+EXPORTER,guard,0,0,True
+EXPORTER,commercial_terms,1,1,True
+BANK_HK,view,1,1,True
+BANK_HK,amount,1,1,True
+BANK_HK,doc_bodies,1,1,True
+BANK_HK,compliance_reasons,1,1,True
+BANK_HK,audit,1,1,True
+BANK_HK,guard,1,1,True
+BANK_HK,commercial_terms,1,1,True
+BANK_HK_COMPLIANCE,view,1,1,True
+BANK_HK_COMPLIANCE,amount,1,1,True
+BANK_HK_COMPLIANCE,doc_bodies,1,1,True
+BANK_HK_COMPLIANCE,compliance_reasons,1,1,True
+BANK_HK_COMPLIANCE,audit,1,1,True
+BANK_HK_COMPLIANCE,guard,1,1,True
+BANK_HK_COMPLIANCE,commercial_terms,1,1,True
+BANK_TH,view,1,1,True
+BANK_TH,amount,1,1,True
+BANK_TH,doc_bodies,0,0,True
+BANK_TH,compliance_reasons,0,0,True
+BANK_TH,audit,1,1,True
+BANK_TH,guard,0,0,True
+BANK_TH,commercial_terms,0,0,True
+LOGISTICS,view,1,1,True
+LOGISTICS,amount,0,0,True
+LOGISTICS,doc_bodies,0,0,True
+LOGISTICS,compliance_reasons,0,0,True
+LOGISTICS,audit,0,0,True
+LOGISTICS,guard,0,0,True
+LOGISTICS,commercial_terms,0,0,True
+CUSTOMS,view,1,1,True
+CUSTOMS,amount,0,0,True
+CUSTOMS,doc_bodies,0,0,True
+CUSTOMS,compliance_reasons,0,0,True
+CUSTOMS,audit,0,0,True
+CUSTOMS,guard,0,0,True
+CUSTOMS,commercial_terms,0,0,True
+REGULATOR,view,1,1,True
+REGULATOR,amount,1,1,True
+REGULATOR,doc_bodies,0,0,True
+REGULATOR,compliance_reasons,1,1,True
+REGULATOR,audit,1,1,True
+REGULATOR,guard,0,0,True
+REGULATOR,commercial_terms,0,0,True

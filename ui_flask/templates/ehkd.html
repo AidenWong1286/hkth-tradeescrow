@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="page">
+<section class="panel stage">
+  <div class="stage-head"><div>
+    <h1>e-HKD concept: both legs or neither</h1>
+    <p>After an escrow release, the exporter's claim moves from Bank H to Bank O (leg A, simulated tokenised commercial-bank deposits) while Bank H compensates Bank O in simulated central-bank money (leg B, e-HKD-style wholesale mock). A two-phase-commit coordinator makes both legs complete together or neither completes.</p>
+    <p>Real multi-ledger atomicity, legal settlement finality, HKMA/EnsembleTX/mBridge connectivity and FX are not implemented. This is a conceptual extension, not a real e-HKD transaction.</p>
+  </div></div>
+</section>
+
+<div class="cols" style="grid-template-columns:340px minmax(0,1fr)">
+  <section class="panel"><h2>Run a case</h2><p class="sub">Pick what happens during settlement.</p>
+    <form method="post" class="cases">{% for k,v in cases.items() %}<label><input type="radio" name="case" value="{{k}}" {{'checked' if k==case}}> <b>{{ k|replace('_',' ')|capitalize }}</b><br><small class="muted" style="margin-left:22px;display:block">{{ v }}</small></label>{% endfor %}
+    <button class="btn gold block" style="margin-top:10px">Run two-leg settlement</button></form></section>
+
+  {% if res %}{% set committed = res.result.outcome=='COMMITTED_BOTH' %}
+  <section class="panel">
+    <h2>Result for {{ res.case|replace('_',' ') }}</h2>
+    <div class="verdict {{ 'ok' if committed else 'bad' }}" style="margin:6px 0 14px;font-size:15px">{{ res.result.outcome|replace('_',' ')|capitalize }}{% if res.result.reason %}: {{ res.result.reason }}{% endif %}</div>
+    <div class="kvline" style="margin-bottom:16px">
+      <span class="chip {{ '' if res.all_or_nothing_ok else 'bad' }}"><i></i>All-or-nothing {{ 'held' if res.all_or_nothing_ok else 'VIOLATED' }}</span>
+      <span class="chip {{ '' if res.supply_conserved else 'bad' }}"><i></i>Supply conserved on both ledgers</span>
+      <span class="chip"><i style="background:{{ 'var(--teal-hi)' if res.no_reservations_left else 'var(--gold-hi)' }}"></i>{{ 'No reservations left' if res.no_reservations_left else 'Reservations still open' }}</span>
+    </div>
+    <div class="legs">
+    {% for leg, title in [('A','Leg A: tokenised deposits (commercial-bank money)'),('B','Leg B: CeBM (conceptual e-HKD)')] %}
+      {% set changed = res.leg_a_changed if leg=='A' else res.leg_b_changed %}
+      <div class="leg {{ 'commit' if changed else 'rollback' }}" style="animation-delay:{{ loop.index0 * 0 }}s">
+        <span class="lock" title="{{ 'Committed' if changed else 'Unchanged' }}">{{ '✓' if changed else '↺' }}</span>
+        <h2 style="margin-bottom:10px">{{ title }}</h2>
+        <table class="tbl"><tr><th>Account</th><th>Before</th><th>After</th></tr>
+        {% for k,v in res.before[leg].items() %}{% set after = res.after[leg][k] %}<tr><td class="mono">{{k}}</td><td class="mono">{{v|hkd}}</td><td class="mono {{ ('ok' if after > v else 'warn') if after != v else 'muted' }}">{{after|hkd}}</td></tr>{% endfor %}</table>
+      </div>
+    {% endfor %}
+    </div>
+    <h2 style="margin-top:16px">Coordinator trace</h2>
+    <ol class="trace">{% for t in res.trace %}<li style="animation-delay:{{ 0.15 + loop.index0 * 0.12 }}s">{{t}}</li>{% endfor %}</ol>
+  </section>
+  {% else %}<section class="panel"><h2>Result</h2><p class="sub">Choose a case and run it. Both legs lock together on success, and both roll back on any failure.</p></section>{% endif %}
+</div>
+</div>
+{% endblock %}

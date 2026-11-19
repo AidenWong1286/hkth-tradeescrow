@@ -1,0 +1,8 @@
+scenario,expected_state_path,actual_state_path,assertions,assertions_passed,result,events,rejected_events,human_commands,evidence_file
+TC-001,Created > Pending > Released,Created > Pending > Released,9,9,PASS,12,0,8,results/events/TC-001.jsonl
+TC-002,Created > Pending > Under Review,Created > Pending > Under Review,9,9,PASS,10,1,7,results/events/TC-002.jsonl
+TC-002R,Created > Pending > Under Review > Pending > Released,Created > Pending > Under Review > Pending > Released,9,9,PASS,16,1,9,results/events/TC-002R.jsonl
+TC-002T,Created > Pending > Under Review > Refunded/Terminated,Created > Pending > Under Review > Refunded/Terminated,9,9,PASS,11,1,8,results/events/TC-002T.jsonl
+TC-003,Created > Pending > Frozen,Created > Pending > Frozen,9,9,PASS,12,2,7,results/events/TC-003.jsonl
+TC-003C,Created > Pending > Frozen > Pending > Released,Created > Pending > Frozen > Pending > Released,9,9,PASS,16,3,8,results/events/TC-003C.jsonl
+TC-003T,Created > Pending > Frozen > Refunded/Terminated,Created > Pending > Frozen > Refunded/Terminated,9,9,PASS,13,2,8,results/events/TC-003T.jsonl

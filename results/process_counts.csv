@@ -1,0 +1,10 @@
+scenario,model,model_label,evidence_type,tasks_total,settlement_tasks,manual_settlement_tasks,automated_settlement_tasks,manual_incl_common,gateways,manual_task_ids
+normal,baseline,Baseline open account,TEAM-DEFINED PROCESS MODEL (not measured industry savings),11,8,7,1,10,2,B04 B05 B06 B08 B09 B11 B12
+normal,proposed,Escrow prototype scope (ends at Bank H release; Bank O observes),TEAM-DEFINED PROCESS MODEL (not measured industry savings),12,9,3,6,6,3,E01 E07 E11
+normal,proposed_e2e,Escrow + hypothetical cross-bank leg (matched scope; not implemented),TEAM-DEFINED PROCESS MODEL (not measured industry savings),15,12,5,7,8,3,E01 E07 E13h E15h E16h
+mismatch,baseline,Baseline open account,TEAM-DEFINED PROCESS MODEL (not measured industry savings),12,9,8,1,11,2,B04 B05 B06 B06x B08 B09 B11 B12
+mismatch,proposed,Escrow prototype scope (ends at Bank H release; Bank O observes),TEAM-DEFINED PROCESS MODEL (not measured industry savings),13,10,4,6,7,3,E01 E07 E08x E11
+mismatch,proposed_e2e,Escrow + hypothetical cross-bank leg (matched scope; not implemented),TEAM-DEFINED PROCESS MODEL (not measured industry savings),16,13,6,7,9,3,E01 E07 E08x E13h E15h E16h
+aml,baseline,Baseline open account,TEAM-DEFINED PROCESS MODEL (not measured industry savings),12,9,8,1,11,2,B04 B05 B06 B08 B09 B09x B11 B12
+aml,proposed,Escrow prototype scope (ends at Bank H release; Bank O observes),TEAM-DEFINED PROCESS MODEL (not measured industry savings),13,10,4,6,7,3,E01 E07 E09x E11
+aml,proposed_e2e,Escrow + hypothetical cross-bank leg (matched scope; not implemented),TEAM-DEFINED PROCESS MODEL (not measured industry savings),16,13,6,7,9,3,E01 E07 E09x E13h E15h E16h

@@ -1,0 +1,20 @@
+__pycache__/
+.pytest_cache/
+node_modules/
+report/*.docx
+report/*.pdf
+report/figs/*.pdf
+report/figs/report_figs.*
+report/figs/arch_fig.*
+report/figs/f-*.png
+presentation/*.pptx
+results/charts/*.png
+results/screenshots/
+# course material and anything showing student names/IDs: kept out of the public repository
+official_inputs/
+team.local.json
+report/figs/cover*.png
+report/figs/cover*.html
+# local tooling
+.claude/
+*.log

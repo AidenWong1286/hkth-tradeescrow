@@ -1,0 +1,7 @@
+# Python >= 3.11 (developed/tested on 3.13). Core engine uses only the standard library.
+streamlit>=1.36        # interactive prototype UI (proposal)
+pandas>=2.0            # Streamlit tables
+flask>=3.0             # verified fallback console
+pytest>=8.0            # test suite
+matplotlib>=3.8        # charts and BPMN renders
+# optional: playwright>=1.40 (screenshot capture), graphviz 'dot' binary (state/architecture diagrams)

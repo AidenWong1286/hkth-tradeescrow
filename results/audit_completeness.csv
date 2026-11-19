@@ -1,0 +1,4 @@
+scenario,required_lifecycle_events,present_with_required_fields,audit_completeness_pct,events_total,events_with_all_required_fields,rejected_attempts_logged,regulator_reconstructs_state_path,regulator_export_commercial_leaks,hash_chain_intact
+TC-001,9,9,100.0,12,12,0,True,0,True
+TC-002R,11,11,100.0,16,16,1,True,0,True
+TC-003C,12,12,100.0,16,16,3,True,0,True

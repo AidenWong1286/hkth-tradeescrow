@@ -1,0 +1,23 @@
+# Q&A preparation brief (final presentation)
+
+Answer pattern: **direct answer → our evidence → the limit.** Never claim more than results/ shows.
+
+| Likely question | Answer | Evidence |
+|---|---|---|
+| Why DLT rather than a normal database? | DLT's case is a shared, jointly governed record across banks, logistics and the regulator. Our prototype uses a mock ledger (SQLite + hash chain), so we can show tamper-evidence and role-limited audit but **cannot** prove DLT is better than a well-run central database. | TC-018; docs/limitations_and_risks.md |
+| How can a contract know goods were shipped? | It can't. It trusts a logistics attestation that must name this trade's shipment ID and is versioned. A false attestation would be accepted: that is the main residual risk. | TC-007, TC-007b; NC-17 |
+| Is this compliant with HK or Thai AML law? | No compliance claim. Screening results are synthetic inputs. We show **where** controls sit (creation + fresh pre-release) and that alerts freeze funds until an accountable human decides. | TC-003, TC-010, TC-011, TC-014; HKMA AML/CFT page [13] |
+| What happens on an AML alert or document dispute? | Alert → Frozen; release and refund refused; a compliance officer must clear (then fresh screening) or terminate. Mismatch → Under Review; corrected documents + fresh PASS + reviewer revalidation, or terminate and refund. | TC-002/003/021/022/023 |
+| Are tokenised deposits, stablecoins and e-HKD the same? | No. A tokenised deposit is a commercial-bank liability, e-HKD/CeBM a central-bank liability, and a stablecoin a licensed issuer's liability. We model the first two separately; stablecoins are out of scope. | docs/domain_model.md; eHKD_extension.md |
+| Did you settle real money or use mBridge/EnsembleTX? | No. No bank, CBDC, EnsembleTX, mBridge, FX or legal-finality connection. Synthetic HKD only. | README; UI banner |
+| Is it actually faster? | Only in our model, under stated assumptions: post-shipment latency 7.0 → 0.5 simulated days (term 0d); 2.25 days if the escrow had to reach a Bank O credit (hypothetical matched scope). The direction holds at low and high assumptions; the size doesn't. Automated steps are assumed to take 0 days, which is optimistic. | results/timelines.csv; report Table 5 |
+| Isn't pre-funding a big cost? | Yes, and we measured it: importer cash committed 2.5 → 7.5 days (base). In exchange, the exporter's unsecured receivable falls from 7 (or 37) days to 0. Escrow moves financing; it doesn't remove it. | charts/financing_burden.png |
+| What if the oracle or document checker lies? | Escrow pays. Mitigations: signed sources, expiry, digest-pinned revisions, human review on mismatch, liability rules. The physical truth of goods remains outside the system. | report §8 |
+| How is the regulator's view private? | Metadata only: states, reason codes, timestamps, roles and hashes; no document values, goods or user IDs. It still reconstructs every state path. | TC-024; audit_completeness.csv (3/3) |
+| Why should we trust your tests? | Denominators are shown, and mutation analysis seeded 14 bugs; run 1 caught 11 and exposed 2 real test gaps, which we fixed (now 13/14). The harness also refuses to score if the unmutated suite fails. | mutation_analysis*.csv |
+| What changed since your proposal? | HKMA's 2 Nov 2026 EnsembleTX upgrade to 24/7 settlement in tokenised CeBM (12 banks, 20 pioneers); the ADB 2025 gap figure; and a corrected CargoX report date (19 Jan 2026). | public_claims_register.csv |
+| Why Flask as well as Streamlit? | Streamlit was the proposal's UI; Flask was added on the same engine so we could verify the UI with an automated browser and keep an offline fallback. | docs/known_issues.md |
+| Is the 57% reduction real? | No: it is our own BPMN task inventory, not measured savings, and it compares unequal end points. With hypothetical steps to reach the same Bank O credit, it is 7 → 5 (28.6%). The prototype logs 4 human commands, not 3, because invoice and B/L are uploaded separately. | results/process_counts.csv; metrics M-13–M-15, M-20, M-31, M-32 |
+| Can any role see everything? | Not any more. An independent audit found the Ledger page bypassed role views; both UIs now use one server-side projection, tested over HTTP for every participant. The participant selector is demo impersonation, not login. | tests/test_ui_access.py; CHANGELOG.md |
+| Are the HKD 5m limit and 48-hour window HKMA rules? | No. They are our own parameters. | results/run_manifest.json rule_config |
+| Did the e-HKD pilot test wholesale settlement? | Phase 2 mainly tested retail use cases; wholesale/FI development is HKMA's stated direction, not a Phase 2 result. | HKMA, 28 Oct 2025 |

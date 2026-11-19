@@ -1,0 +1,64 @@
+scenario,assertion,expected,actual,pass
+TC-001,state_path,"[""Created"", ""Pending"", ""Released""]","[""Created"", ""Pending"", ""Released""]",True
+TC-001,importer_balance_minor,15000000,15000000,True
+TC-001,exporter_balance_minor,25000000,25000000,True
+TC-001,escrow_balance_minor,0,0,True
+TC-001,blocked_attempts_all_refused,0,0,True
+TC-001,supply_conserved,true,true,True
+TC-001,journal_intact,true,true,True
+TC-001,release_events,1,1,True
+TC-001,refund_events,0,0,True
+TC-002,state_path,"[""Created"", ""Pending"", ""Under Review""]","[""Created"", ""Pending"", ""Under Review""]",True
+TC-002,importer_balance_minor,15000000,15000000,True
+TC-002,exporter_balance_minor,0,0,True
+TC-002,escrow_balance_minor,25000000,25000000,True
+TC-002,blocked_attempts_all_refused,1,1,True
+TC-002,supply_conserved,true,true,True
+TC-002,journal_intact,true,true,True
+TC-002,release_events,0,0,True
+TC-002,refund_events,0,0,True
+TC-002R,state_path,"[""Created"", ""Pending"", ""Under Review"", ""Pending"", ""Released""]","[""Created"", ""Pending"", ""Under Review"", ""Pending"", ""Released""]",True
+TC-002R,importer_balance_minor,15000000,15000000,True
+TC-002R,exporter_balance_minor,25000000,25000000,True
+TC-002R,escrow_balance_minor,0,0,True
+TC-002R,blocked_attempts_all_refused,1,1,True
+TC-002R,supply_conserved,true,true,True
+TC-002R,journal_intact,true,true,True
+TC-002R,release_events,1,1,True
+TC-002R,refund_events,0,0,True
+TC-002T,state_path,"[""Created"", ""Pending"", ""Under Review"", ""Refunded/Terminated""]","[""Created"", ""Pending"", ""Under Review"", ""Refunded/Terminated""]",True
+TC-002T,importer_balance_minor,40000000,40000000,True
+TC-002T,exporter_balance_minor,0,0,True
+TC-002T,escrow_balance_minor,0,0,True
+TC-002T,blocked_attempts_all_refused,1,1,True
+TC-002T,supply_conserved,true,true,True
+TC-002T,journal_intact,true,true,True
+TC-002T,release_events,0,0,True
+TC-002T,refund_events,1,1,True
+TC-003,state_path,"[""Created"", ""Pending"", ""Frozen""]","[""Created"", ""Pending"", ""Frozen""]",True
+TC-003,importer_balance_minor,15000000,15000000,True
+TC-003,exporter_balance_minor,0,0,True
+TC-003,escrow_balance_minor,25000000,25000000,True
+TC-003,blocked_attempts_all_refused,2,2,True
+TC-003,supply_conserved,true,true,True
+TC-003,journal_intact,true,true,True
+TC-003,release_events,0,0,True
+TC-003,refund_events,0,0,True
+TC-003C,state_path,"[""Created"", ""Pending"", ""Frozen"", ""Pending"", ""Released""]","[""Created"", ""Pending"", ""Frozen"", ""Pending"", ""Released""]",True
+TC-003C,importer_balance_minor,15000000,15000000,True
+TC-003C,exporter_balance_minor,25000000,25000000,True
+TC-003C,escrow_balance_minor,0,0,True
+TC-003C,blocked_attempts_all_refused,3,3,True
+TC-003C,supply_conserved,true,true,True
+TC-003C,journal_intact,true,true,True
+TC-003C,release_events,1,1,True
+TC-003C,refund_events,0,0,True
+TC-003T,state_path,"[""Created"", ""Pending"", ""Frozen"", ""Refunded/Terminated""]","[""Created"", ""Pending"", ""Frozen"", ""Refunded/Terminated""]",True
+TC-003T,importer_balance_minor,40000000,40000000,True
+TC-003T,exporter_balance_minor,0,0,True
+TC-003T,escrow_balance_minor,0,0,True
+TC-003T,blocked_attempts_all_refused,2,2,True
+TC-003T,supply_conserved,true,true,True
+TC-003T,journal_intact,true,true,True
+TC-003T,release_events,0,0,True
+TC-003T,refund_events,1,1,True

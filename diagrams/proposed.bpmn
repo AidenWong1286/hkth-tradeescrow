@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Defs_proposed" targetNamespace="https://example.org/hkth-tradeescrow" exporter="tradeescrow/make_diagrams.py" exporterVersion="1.0">
+<bpmn:collaboration id="Collab_proposed"><bpmn:participant id="Pool_proposed" name="Proposed pre-funded tokenised-deposit escrow" processRef="Process_proposed"/></bpmn:collaboration>
+<bpmn:process id="Process_proposed" isExecutable="false"><bpmn:laneSet id="LS_proposed">
+<bpmn:lane id="Lane_proposed_0" name="Importer (HK)">
+<bpmn:flowNodeRef>start</bpmn:flowNodeRef>
+<bpmn:flowNodeRef>E01</bpmn:flowNodeRef>
+</bpmn:lane>
+<bpmn:lane id="Lane_proposed_1" name="Bank H escrow contract &amp; services">
+<bpmn:flowNodeRef>end_rej</bpmn:flowNodeRef>
+<bpmn:flowNodeRef>end_ref</bpmn:flowNodeRef>
+<bpmn:flowNodeRef>G0</bpmn:flowNodeRef>
+<bpmn:flowNodeRef>G1</bpmn:flowNodeRef>
+<bpmn:flowNodeRef>G2</bpmn:flowNodeRef>
+<bpmn:flowNodeRef>E02</bpmn:flowNodeRef>
+<bpmn:flowNodeRef>E03</bpmn:flowNodeRef>
+<bpmn:flowNodeRef>E08</bpmn:flowNodeRef>
+<bpmn:flowNodeRef>E08x</bpmn:flowNodeRef>
+<bpmn:flowNodeRef>E09</bpmn:flowNodeRef>
+<bpmn:flowNodeRef>E09x</bpmn:flowNodeRef>
+<bpmn:flowNodeRef>E10</bpmn:flowNodeRef>
+</bpmn:lane>
+<bpmn:lane id="Lane_proposed_2" name="Bank O (observer)">
+<bpmn:flowNodeRef>E11</bpmn:flowNodeRef>
+</bpmn:lane>
+<bpmn:lane id="Lane_proposed_3" name="Exporter (TH)">
+<bpmn:flowNodeRef>E04</bpmn:flowNodeRef>
+<bpmn:flowNodeRef>E07</bpmn:flowNodeRef>
+</bpmn:lane>
+<bpmn:lane id="Lane_proposed_4" name="Logistics / Customs">
+<bpmn:flowNodeRef>E05</bpmn:flowNodeRef>
+<bpmn:flowNodeRef>E06</bpmn:flowNodeRef>
+</bpmn:lane>
+<bpmn:lane id="Lane_proposed_5" name="Regulator (audit)">
+<bpmn:flowNodeRef>end</bpmn:flowNodeRef>
+<bpmn:flowNodeRef>E12</bpmn:flowNodeRef>
+</bpmn:lane>
+</bpmn:laneSet>
+<bpmn:startEvent id="start" name="Contract signed"><bpmn:outgoing>F0</bpmn:outgoing></bpmn:startEvent>
+<bpmn:endEvent id="end" name="Settled &amp; auditable"><bpmn:incoming>F21</bpmn:incoming></bpmn:endEvent>
+<bpmn:endEvent id="end_rej" name="Escrow rejected"><bpmn:incoming>F4</bpmn:incoming></bpmn:endEvent>
+<bpmn:endEvent id="end_ref" name="Refunded/Terminated"><bpmn:incoming>F18</bpmn:incoming></bpmn:endEvent>
+<bpmn:exclusiveGateway id="G0" name="Creation KYC?"><bpmn:incoming>F2</bpmn:incoming><bpmn:outgoing>F3</bpmn:outgoing><bpmn:outgoing>F4</bpmn:outgoing></bpmn:exclusiveGateway>
+<bpmn:exclusiveGateway id="G1" name="Docs PASS?"><bpmn:incoming>F10</bpmn:incoming><bpmn:outgoing>F11</bpmn:outgoing><bpmn:outgoing>F12</bpmn:outgoing></bpmn:exclusiveGateway>
+<bpmn:exclusiveGateway id="G2" name="Release guard"><bpmn:incoming>F14</bpmn:incoming><bpmn:outgoing>F15</bpmn:outgoing><bpmn:outgoing>F16</bpmn:outgoing></bpmn:exclusiveGateway>
+<bpmn:userTask id="E01" name="E01 Create &amp; fund escrow request"><bpmn:documentation>kind=MANUAL; segment=SETTLEMENT; path=MAIN; assumed duration days low/base/high=(0.25, 0.5, 1)</bpmn:documentation><bpmn:incoming>F0</bpmn:incoming><bpmn:outgoing>F1</bpmn:outgoing></bpmn:userTask>
+<bpmn:serviceTask id="E02" name="E02 Creation KYC/AML screening"><bpmn:documentation>kind=AUTO; segment=SETTLEMENT; path=MAIN; assumed duration days low/base/high=(0.0, 0.0, 0.0)</bpmn:documentation><bpmn:incoming>F1</bpmn:incoming><bpmn:outgoing>F2</bpmn:outgoing></bpmn:serviceTask>
+<bpmn:serviceTask id="E03" name="E03 Lock tokenised deposits"><bpmn:documentation>kind=AUTO; segment=SETTLEMENT; path=MAIN; assumed duration days low/base/high=(0.0, 0.0, 0.0)</bpmn:documentation><bpmn:incoming>F3</bpmn:incoming><bpmn:outgoing>F5</bpmn:outgoing></bpmn:serviceTask>
+<bpmn:userTask id="E04" name="E04 Prepare goods &amp; export declaration"><bpmn:documentation>kind=MANUAL; segment=COMMON; path=MAIN; assumed duration days low/base/high=(3, 5, 7)</bpmn:documentation><bpmn:incoming>F5</bpmn:incoming><bpmn:outgoing>F6</bpmn:outgoing></bpmn:userTask>
+<bpmn:manualTask id="E05" name="E05 Clear export customs; submit declaration"><bpmn:documentation>kind=EXTERNAL_MANUAL; segment=COMMON; path=MAIN; assumed duration days low/base/high=(0.5, 1, 2)</bpmn:documentation><bpmn:incoming>F6</bpmn:incoming><bpmn:outgoing>F7</bpmn:outgoing></bpmn:manualTask>
+<bpmn:manualTask id="E06" name="E06 Load goods; issue B/L; attest shipment"><bpmn:documentation>kind=EXTERNAL_MANUAL; segment=COMMON; path=MAIN; assumed duration days low/base/high=(0.5, 1, 2)</bpmn:documentation><bpmn:incoming>F7</bpmn:incoming><bpmn:outgoing>F8</bpmn:outgoing></bpmn:manualTask>
+<bpmn:userTask id="E07" name="E07 Upload invoice &amp; bill of lading"><bpmn:documentation>kind=MANUAL; segment=SETTLEMENT; path=MAIN; assumed duration days low/base/high=(0.1, 0.5, 1)</bpmn:documentation><bpmn:incoming>F8</bpmn:incoming><bpmn:outgoing>F9</bpmn:outgoing></bpmn:userTask>
+<bpmn:serviceTask id="E08" name="E08 Automated 4-document matching"><bpmn:documentation>kind=AUTO; segment=SETTLEMENT; path=MAIN; assumed duration days low/base/high=(0.0, 0.0, 0.0)</bpmn:documentation><bpmn:incoming>F9</bpmn:incoming><bpmn:outgoing>F10</bpmn:outgoing></bpmn:serviceTask>
+<bpmn:userTask id="E08x" name="E08x Manual review; exporter corrects; revalidate"><bpmn:documentation>kind=MANUAL; segment=SETTLEMENT; path=MISMATCH; assumed duration days low/base/high=(2, 3, 5)</bpmn:documentation><bpmn:incoming>F12</bpmn:incoming><bpmn:outgoing>F13</bpmn:outgoing></bpmn:userTask>
+<bpmn:serviceTask id="E09" name="E09 Pre-release KYC/AML screening"><bpmn:documentation>kind=AUTO; segment=SETTLEMENT; path=MAIN; assumed duration days low/base/high=(0.0, 0.0, 0.0)</bpmn:documentation><bpmn:incoming>F11</bpmn:incoming><bpmn:incoming>F13</bpmn:incoming><bpmn:incoming>F17</bpmn:incoming><bpmn:outgoing>F14</bpmn:outgoing></bpmn:serviceTask>
+<bpmn:userTask id="E09x" name="E09x Compliance investigation (Frozen)"><bpmn:documentation>kind=MANUAL; segment=SETTLEMENT; path=AML; assumed duration days low/base/high=(2, 3, 5)</bpmn:documentation><bpmn:incoming>F16</bpmn:incoming><bpmn:outgoing>F17</bpmn:outgoing><bpmn:outgoing>F18</bpmn:outgoing></bpmn:userTask>
+<bpmn:serviceTask id="E10" name="E10 Guarded release to exporter"><bpmn:documentation>kind=AUTO; segment=SETTLEMENT; path=MAIN; assumed duration days low/base/high=(0.0, 0.0, 0.0)</bpmn:documentation><bpmn:incoming>F15</bpmn:incoming><bpmn:outgoing>F19</bpmn:outgoing></bpmn:serviceTask>
+<bpmn:userTask id="E11" name="E11 Acknowledge receipt (observation)"><bpmn:documentation>kind=MANUAL; segment=SETTLEMENT; path=MAIN; assumed duration days low/base/high=(0, 0.1, 0.5)</bpmn:documentation><bpmn:incoming>F19</bpmn:incoming><bpmn:outgoing>F20</bpmn:outgoing></bpmn:userTask>
+<bpmn:serviceTask id="E12" name="E12 Read-only audit trail available"><bpmn:documentation>kind=AUTO; segment=SETTLEMENT; path=MAIN; assumed duration days low/base/high=(0.0, 0.0, 0.0)</bpmn:documentation><bpmn:incoming>F20</bpmn:incoming><bpmn:outgoing>F21</bpmn:outgoing></bpmn:serviceTask>
+<bpmn:sequenceFlow id="F0" sourceRef="start" targetRef="E01"/>
+<bpmn:sequenceFlow id="F1" sourceRef="E01" targetRef="E02"/>
+<bpmn:sequenceFlow id="F2" sourceRef="E02" targetRef="G0"/>
+<bpmn:sequenceFlow id="F3" sourceRef="G0" targetRef="E03" name="PASS"/>
+<bpmn:sequenceFlow id="F4" sourceRef="G0" targetRef="end_rej" name="FAIL"/>
+<bpmn:sequenceFlow id="F5" sourceRef="E03" targetRef="E04"/>
+<bpmn:sequenceFlow id="F6" sourceRef="E04" targetRef="E05"/>
+<bpmn:sequenceFlow id="F7" sourceRef="E05" targetRef="E06"/>
+<bpmn:sequenceFlow id="F8" sourceRef="E06" targetRef="E07"/>
+<bpmn:sequenceFlow id="F9" sourceRef="E07" targetRef="E08"/>
+<bpmn:sequenceFlow id="F10" sourceRef="E08" targetRef="G1"/>
+<bpmn:sequenceFlow id="F11" sourceRef="G1" targetRef="E09" name="PASS"/>
+<bpmn:sequenceFlow id="F12" sourceRef="G1" targetRef="E08x" name="FAIL → Under Review"/>
+<bpmn:sequenceFlow id="F13" sourceRef="E08x" targetRef="E09"/>
+<bpmn:sequenceFlow id="F14" sourceRef="E09" targetRef="G2"/>
+<bpmn:sequenceFlow id="F15" sourceRef="G2" targetRef="E10" name="PASS (fresh, no hold)"/>
+<bpmn:sequenceFlow id="F16" sourceRef="G2" targetRef="E09x" name="ALERT → Frozen"/>
+<bpmn:sequenceFlow id="F17" sourceRef="E09x" targetRef="E09" name="cleared → re-screen"/>
+<bpmn:sequenceFlow id="F18" sourceRef="E09x" targetRef="end_ref" name="terminate → refund"/>
+<bpmn:sequenceFlow id="F19" sourceRef="E10" targetRef="E11"/>
+<bpmn:sequenceFlow id="F20" sourceRef="E11" targetRef="E12"/>
+<bpmn:sequenceFlow id="F21" sourceRef="E12" targetRef="end"/>
+</bpmn:process>
+<bpmndi:BPMNDiagram id="D_proposed"><bpmndi:BPMNPlane id="P_proposed" bpmnElement="Collab_proposed">
+<bpmndi:BPMNShape id="Pool_proposed_di" bpmnElement="Pool_proposed" isHorizontal="true"><dc:Bounds x="0" y="0" width="2955" height="1050"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Lane_proposed_0_di" bpmnElement="Lane_proposed_0" isHorizontal="true"><dc:Bounds x="30" y="0" width="2925" height="175"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Lane_proposed_1_di" bpmnElement="Lane_proposed_1" isHorizontal="true"><dc:Bounds x="30" y="175" width="2925" height="175"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Lane_proposed_2_di" bpmnElement="Lane_proposed_2" isHorizontal="true"><dc:Bounds x="30" y="350" width="2925" height="175"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Lane_proposed_3_di" bpmnElement="Lane_proposed_3" isHorizontal="true"><dc:Bounds x="30" y="525" width="2925" height="175"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Lane_proposed_4_di" bpmnElement="Lane_proposed_4" isHorizontal="true"><dc:Bounds x="30" y="700" width="2925" height="175"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="Lane_proposed_5_di" bpmnElement="Lane_proposed_5" isHorizontal="true"><dc:Bounds x="30" y="875" width="2925" height="175"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="start_di" bpmnElement="start"><dc:Bounds x="132" y="70" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="end_di" bpmnElement="end"><dc:Bounds x="2772" y="944" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="end_rej_di" bpmnElement="end_rej"><dc:Bounds x="792" y="285" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="end_ref_di" bpmnElement="end_ref"><dc:Bounds x="2442" y="285" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="G0_di" bpmnElement="G0"><dc:Bounds x="620" y="202" width="50" height="50"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="G1_di" bpmnElement="G1"><dc:Bounds x="1775" y="202" width="50" height="50"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="G2_di" bpmnElement="G2"><dc:Bounds x="2105" y="202" width="50" height="50"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="E01_di" bpmnElement="E01"><dc:Bounds x="250" y="58" width="130" height="58"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="E02_di" bpmnElement="E02"><dc:Bounds x="415" y="198" width="130" height="58"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="E03_di" bpmnElement="E03"><dc:Bounds x="745" y="198" width="130" height="58"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="E04_di" bpmnElement="E04"><dc:Bounds x="910" y="584" width="130" height="58"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="E05_di" bpmnElement="E05"><dc:Bounds x="1075" y="758" width="130" height="58"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="E06_di" bpmnElement="E06"><dc:Bounds x="1240" y="758" width="130" height="58"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="E07_di" bpmnElement="E07"><dc:Bounds x="1405" y="584" width="130" height="58"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="E08_di" bpmnElement="E08"><dc:Bounds x="1570" y="198" width="130" height="58"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="E08x_di" bpmnElement="E08x"><dc:Bounds x="1900" y="274" width="130" height="58"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="E09_di" bpmnElement="E09"><dc:Bounds x="1900" y="198" width="130" height="58"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="E09x_di" bpmnElement="E09x"><dc:Bounds x="2230" y="274" width="130" height="58"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="E10_di" bpmnElement="E10"><dc:Bounds x="2230" y="198" width="130" height="58"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="E11_di" bpmnElement="E11"><dc:Bounds x="2395" y="408" width="130" height="58"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="E12_di" bpmnElement="E12"><dc:Bounds x="2560" y="934" width="130" height="58"/></bpmndi:BPMNShape>
+<bpmndi:BPMNEdge id="F0_di" bpmnElement="F0"><di:waypoint x="168" y="88"/><di:waypoint x="238" y="88"/><di:waypoint x="238" y="88"/><di:waypoint x="250" y="88"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="F1_di" bpmnElement="F1"><di:waypoint x="380" y="88"/><di:waypoint x="403" y="88"/><di:waypoint x="403" y="227"/><di:waypoint x="415" y="227"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="F2_di" bpmnElement="F2"><di:waypoint x="545" y="227"/><di:waypoint x="608" y="227"/><di:waypoint x="608" y="227"/><di:waypoint x="620" y="227"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="F3_di" bpmnElement="F3"><di:waypoint x="670" y="227"/><di:waypoint x="733" y="227"/><di:waypoint x="733" y="227"/><di:waypoint x="745" y="227"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="F4_di" bpmnElement="F4"><di:waypoint x="670" y="227"/><di:waypoint x="780" y="227"/><di:waypoint x="780" y="303"/><di:waypoint x="792" y="303"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="F5_di" bpmnElement="F5"><di:waypoint x="875" y="227"/><di:waypoint x="898" y="227"/><di:waypoint x="898" y="612"/><di:waypoint x="910" y="612"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="F6_di" bpmnElement="F6"><di:waypoint x="1040" y="612"/><di:waypoint x="1063" y="612"/><di:waypoint x="1063" y="788"/><di:waypoint x="1075" y="788"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="F7_di" bpmnElement="F7"><di:waypoint x="1205" y="788"/><di:waypoint x="1228" y="788"/><di:waypoint x="1228" y="788"/><di:waypoint x="1240" y="788"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="F8_di" bpmnElement="F8"><di:waypoint x="1370" y="788"/><di:waypoint x="1393" y="788"/><di:waypoint x="1393" y="612"/><di:waypoint x="1405" y="612"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="F9_di" bpmnElement="F9"><di:waypoint x="1535" y="612"/><di:waypoint x="1558" y="612"/><di:waypoint x="1558" y="227"/><di:waypoint x="1570" y="227"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="F10_di" bpmnElement="F10"><di:waypoint x="1700" y="227"/><di:waypoint x="1763" y="227"/><di:waypoint x="1763" y="227"/><di:waypoint x="1775" y="227"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="F11_di" bpmnElement="F11"><di:waypoint x="1825" y="227"/><di:waypoint x="1888" y="227"/><di:waypoint x="1888" y="227"/><di:waypoint x="1900" y="227"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="F12_di" bpmnElement="F12"><di:waypoint x="1825" y="227"/><di:waypoint x="1888" y="227"/><di:waypoint x="1888" y="303"/><di:waypoint x="1900" y="303"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="F13_di" bpmnElement="F13"><di:waypoint x="1965" y="332"/><di:waypoint x="1965" y="355"/><di:waypoint x="1965" y="355"/><di:waypoint x="1965" y="256"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="F14_di" bpmnElement="F14"><di:waypoint x="2030" y="227"/><di:waypoint x="2093" y="227"/><di:waypoint x="2093" y="227"/><di:waypoint x="2105" y="227"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="F15_di" bpmnElement="F15"><di:waypoint x="2155" y="227"/><di:waypoint x="2218" y="227"/><di:waypoint x="2218" y="227"/><di:waypoint x="2230" y="227"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="F16_di" bpmnElement="F16"><di:waypoint x="2155" y="227"/><di:waypoint x="2218" y="227"/><di:waypoint x="2218" y="303"/><di:waypoint x="2230" y="303"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="F17_di" bpmnElement="F17"><di:waypoint x="2295" y="332"/><di:waypoint x="2295" y="355"/><di:waypoint x="1965" y="355"/><di:waypoint x="1965" y="256"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="F18_di" bpmnElement="F18"><di:waypoint x="2360" y="303"/><di:waypoint x="2430" y="303"/><di:waypoint x="2430" y="303"/><di:waypoint x="2442" y="303"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="F19_di" bpmnElement="F19"><di:waypoint x="2360" y="227"/><di:waypoint x="2383" y="227"/><di:waypoint x="2383" y="438"/><di:waypoint x="2395" y="438"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="F20_di" bpmnElement="F20"><di:waypoint x="2525" y="438"/><di:waypoint x="2548" y="438"/><di:waypoint x="2548" y="962"/><di:waypoint x="2560" y="962"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="F21_di" bpmnElement="F21"><di:waypoint x="2690" y="962"/><di:waypoint x="2760" y="962"/><di:waypoint x="2760" y="962"/><di:waypoint x="2772" y="962"/></bpmndi:BPMNEdge>
+</bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>

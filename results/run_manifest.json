@@ -1,0 +1,23 @@
+{
+  "run_started_utc": "2026-11-19T09:56:31.864131+00:00",
+  "run_finished_utc": "2026-11-19T09:57:05.465448+00:00",
+  "code_sha256_16": "b5f2334b6c31ab71",
+  "fixture_version": "FX-2026.11.07-v1",
+  "python": "3.13.7",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "random_seed_robustness": 3002,
+  "sim_clock_start": "2026-11-02T09:00:00+08:00",
+  "rule_config": {
+    "txn_limit_minor": 500000000,
+    "prerelease_kyc_validity_hours": 48,
+    "currency": "HKD",
+    "note": "HKD 5,000,000 limit and 48h screening window are TEAM PARAMETERS, not HKMA or legal requirements"
+  },
+  "evidence_legend": {
+    "SIMULATION_RESULT": "executed tests / runs of this code on synthetic data",
+    "MODEL": "team-defined BPMN process inventory; not measured industry savings",
+    "ASSUMPTION-DRIVEN MODEL": "team-assumed durations; not bank performance",
+    "SENSITIVITY": "includes hypothetical steps the prototype does not implement"
+  },
+  "note": "Business durations are assumption-driven (results/baseline_assumptions.csv). Wall-clock timings (compute_time.csv) are environment-dependent and are not settlement times."
+}

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en" data-theme="dark"><head><meta charset="utf-8"><title>HK–TH TradeEscrow · Demo Console</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>try{var t=localStorage.getItem("te-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t;}catch(e){}</script>
+<link rel="stylesheet" href="{{ url_for('static', filename='console.css') }}">
+</head><body class="page-{{ page|default('console') }}">
+<svg class="mesh" id="mesh" aria-hidden="true"></svg>
+<header class="top" id="topbar">
+  <a class="brand" href="/intro"><span class="mark"><i></i><i></i><i></i><i></i></span><b>TradeEscrow</b><span class="route">Hong Kong → Thailand</span></a>
+  <nav class="tabs">
+    <a href="/" class="{{ 'on' if page=='console' }}">Escrow console</a>
+    <a href="/ledger" class="{{ 'on' if page=='ledger' }}">Ledger and journal</a>
+    <a href="/ehkd" class="{{ 'on' if page=='ehkd' }}">e-HKD concept</a>
+    <a href="/export.json">Export audit (role-filtered)</a>
+  </nav>
+  <div class="viewer">
+    {% if page != 'intro' %}<span class="who"><span class="mono-badge" style="width:24px;height:24px;font-size:10px;background:var(--ink);color:var(--inv);border-color:var(--ink)">{{ mono_role.get(p.role, '··') }}</span>Acting as <b>{{ role_labels.get(p.role, p.role) }}</b></span>
+    <span class="clock" title="Simulated clock (HKT)">{{ clock[:16].replace('T',' ') }} HKT</span>{% endif %}
+    <button class="theme" id="themetoggle" type="button" aria-label="Switch light or dark theme"><span></span></button>
+  </div>
+</header>
+<div class="simstrip"><b>Simulation, synthetic data only.</b> Tokenised deposits, attestations, KYC/AML results and the e-HKD leg are mocks; no bank, HKMA, e-HKD, EnsembleTX or mBridge system is connected.</div>
+{% block body %}{% endblock %}
+{% if page != 'intro' %}<footer class="foot">Engine: tradeescrow (Python, SQLite mock permissioned ledger, hash-chained journal). Single-operator localhost demo: “Act as” is role impersonation, not authentication; permissions and data projections are enforced server-side.</footer>{% endif %}
+<script src="{{ url_for('static', filename='mesh.js') }}" defer></script>
+<script src="{{ url_for('static', filename='console.js') }}" defer></script>
+</body></html>

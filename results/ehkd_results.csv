@@ -1,0 +1,6 @@
+case,description,outcome,leg_a_changed,leg_b_changed,all_or_nothing_ok,supply_conserved,no_reservations_left
+success,Both legs prepare and commit,COMMITTED_BOTH,True,True,True,True,True
+cebm_insufficient,Bank H has insufficient central-bank money -> both legs roll back,ROLLED_BACK,False,False,True,True,True
+deposit_leg_refused,Tokenised-deposit leg refuses prepare -> both roll back,ROLLED_BACK,False,False,True,True,True
+crash_before_decision,"Coordinator crashes after prepare, before decision -> recovery aborts both",ROLLED_BACK,False,False,True,True,True
+transient_commit,"CeBM commit fails once, retried under the durable COMMIT decision",COMMITTED_BOTH,True,True,True,True,True

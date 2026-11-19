@@ -1,0 +1,19 @@
+control_id,unsafe_condition,actor,blocked,reason_code,funds_unchanged
+NC-01,No shipment attestation,svc_contract,True,ESCROW_NOT_READY,True
+NC-02,Documents never checked,svc_contract,True,DOCUMENTS_NOT_VERIFIED,True
+NC-03,Document mismatch (Under Review),svc_contract,True,ESCROW_UNDER_REVIEW,True
+NC-04,Required customs field missing,svc_contract,True,ESCROW_UNDER_REVIEW,True
+NC-05,Approved documents revised afterwards,svc_contract,True,DOCUMENTS_NOT_VERIFIED,True
+NC-06,No pre-release screening,svc_contract,True,PRE_RELEASE_KYC_MISSING,True
+NC-07,Pre-release screening expired (49h),svc_contract,True,PRE_RELEASE_KYC_EXPIRED,True
+NC-08,Screening older than latest document approval,svc_contract,True,PRE_RELEASE_KYC_MISSING,True
+NC-09,AML alert at pre-release (Frozen),svc_contract,True,ESCROW_FROZEN,True
+NC-10,Manual compliance hold after all PASS,svc_contract,True,ESCROW_FROZEN,True
+NC-11,Hold cleared but no fresh screening,svc_contract,True,PRE_RELEASE_KYC_MISSING,True
+NC-12,Already released (second release),svc_contract,True,TERMINAL_STATE,True
+NC-13,Already refunded,svc_contract,True,TERMINAL_STATE,True
+NC-14,Regulator triggers release,u_regulator,True,RBAC_DENIED,True
+NC-15,Exporter triggers release,u_exporter_01,True,RBAC_DENIED,True
+NC-16,Importer triggers release,u_importer_01,True,RBAC_DENIED,True
+NC-17,Wrong-trade shipment evidence only,svc_contract,True,ESCROW_NOT_READY,True
+PC-01,(positive control) all gates valid,svc_contract,False,RELEASED,False

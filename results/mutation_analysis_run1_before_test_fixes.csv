@@ -1,0 +1,15 @@
+mutant,seeded_defect,file,applied,killed_by_suite,first_failing_test
+M01,Release guard ignores active holds,escrow.py,True,True,test_tc011_alert_after_pass_overrides
+M02,Document approval not pinned to current revision,escrow.py,True,False,
+M03,Pre-release screening never expires,escrow.py,True,True,test_tc010_expired_prerelease_kyc
+M04,Server-side RBAC disabled,escrow.py,True,True,test_tc014_refund_blocked_during_aml_hold
+M05,Screening freshness ordering removed,escrow.py,True,True,test_tc021_cleared_dispute_requires_fresh_gates
+M06,Cross-trade shipment check removed,escrow.py,True,False,
+M07,New document revision does not revoke approvals,escrow.py,True,True,test_tc009_revision_invalidates_old_approval
+M08,Creation KYC/AML not enforced,escrow.py,True,True,test_tc005_creation_kyc_fail
+M09,Hash verification skips content check,escrow.py,True,True,test_tc018_tamper_detection
+M10,Regulator receives full events,views.py,True,True,test_tc024_role_limited_audit_export
+M11,Optimistic version check removed,escrow.py,True,False,
+M12,Refund allowed during AML hold,escrow.py,True,True,test_tc003_aml_alert_freezes
+M13,Document matching ignores amounts,offchain.py,True,True,test_tc002_document_mismatch_blocks_and_reviews
+M14,Idempotency store disabled,escrow.py,True,True,test_tc012_duplicate_release

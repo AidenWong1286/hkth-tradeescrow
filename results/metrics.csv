@@ -1,0 +1,35 @@
+metric_id,metric,value,denominator,unit,claim_type,source_file
+M-01,Automated tests passed,91,91,tests,SIMULATION_RESULT,results/test_results.csv
+M-02,Flagship scenario assertions passed,63,63,assertions,SIMULATION_RESULT,results/assertions.csv
+M-03,Transition/outcome accuracy (%),100.0,,%,SIMULATION_RESULT,results/assertions.csv
+M-04,Unsafe release attempts blocked,17,17,attempts,SIMULATION_RESULT,results/control_matrix.csv
+M-05,Positive control released,True,,bool,SIMULATION_RESULT,results/control_matrix.csv
+M-06,"Audit completeness, lifecycle events (sum over 3 scenarios)",32,32,events,SIMULATION_RESULT,results/audit_completeness.csv
+M-07,Regulator reconstructs state path from metadata only,3,3,scenarios,SIMULATION_RESULT,results/audit_completeness.csv
+M-08,Role-visibility rules obeyed,63,63,rules,SIMULATION_RESULT,results/audit_access_matrix.csv
+M-09,Random-sequence invariant violations,0,5935,checks,SIMULATION_RESULT,results/robustness.csv
+M-10,"Random commands executed (200 trades, seed 3002)",5312,,commands,SIMULATION_RESULT,results/robustness.csv
+M-11,Seeded defects detected by test suite,13,14,mutants,SIMULATION_RESULT,results/mutation_analysis.csv
+M-12,e-HKD cases satisfying all-or-nothing,5,5,cases,SIMULATION_RESULT,results/ehkd_results.csv
+M-13,"Manual settlement tasks — baseline, normal",7,,tasks,MODEL (BPMN inventory),results/process_counts.csv
+M-14,"Manual settlement tasks — escrow, normal",3,,tasks,MODEL (BPMN inventory),results/process_counts.csv
+M-15,"Manual-step reduction, normal (%)",57.1,,%,MODEL,results/process_counts.csv
+M-16,"Manual settlement tasks — baseline, mismatch",8,,tasks,MODEL,results/process_counts.csv
+M-17,"Manual settlement tasks — escrow, mismatch",4,,tasks,MODEL,results/process_counts.csv
+M-18,"Manual settlement tasks — baseline, AML",8,,tasks,MODEL,results/process_counts.csv
+M-19,"Manual settlement tasks — escrow, AML",4,,tasks,MODEL,results/process_counts.csv
+M-20,"Human settlement-role commands executed in prototype, TC-001",4,,commands,SIMULATION_RESULT,results/measured_human_commands.csv
+M-21,"Post-shipment latency — baseline, normal, base, term 0 (days)",7.0,,sim days,ASSUMPTION-DRIVEN MODEL,results/timelines.csv
+M-22,"Post-shipment latency — escrow, normal, base (days)",0.5,,sim days,ASSUMPTION-DRIVEN MODEL,results/timelines.csv
+M-23,"Post-shipment latency — baseline, normal, base, term 30 (days)",37.0,,sim days,ASSUMPTION-DRIVEN MODEL,results/timelines.csv
+M-24,"Importer funds committed before exporter credit — baseline, normal, base, term 0 (days)",2.5,,sim days,ASSUMPTION-DRIVEN MODEL,results/timelines.csv
+M-25,"Importer funds committed before exporter credit — escrow, normal, base (days)",7.5,,sim days,ASSUMPTION-DRIVEN MODEL,results/timelines.csv
+M-26,"Importer lock-up — escrow, normal, base (HKD-days)",1875000,,HKD-days,ASSUMPTION-DRIVEN MODEL,results/timelines.csv
+M-27,"Exporter unsecured receivable — baseline, normal, base, term 30 (HKD-days)",9250000,,HKD-days,ASSUMPTION-DRIVEN MODEL,results/timelines.csv
+M-28,"Full cycle to exporter credit — baseline, normal, base, term 0 (days)",14.0,,sim days,ASSUMPTION-DRIVEN MODEL,results/timelines.csv
+M-29,"Full cycle to exporter credit — escrow, normal, base (days)",8.0,,sim days,ASSUMPTION-DRIVEN MODEL,results/timelines.csv
+M-30,"Engine compute TC-001 median (ms, wall-clock)",4.06,,ms,SIMULATION_RESULT (environment-dependent),results/compute_time.csv
+M-31,"Manual settlement tasks — escrow + hypothetical cross-bank leg (matched scope), normal",5,,tasks,MODEL — SENSITIVITY (hypothetical steps),results/process_counts.csv
+M-32,"Manual-step reduction, matched scope, normal (%)",28.6,,%,MODEL — SENSITIVITY,results/process_counts.csv
+M-33,"Post-shipment latency to Bank O credit — matched scope, normal, base (days)",2.25,,sim days,ASSUMPTION-DRIVEN MODEL — SENSITIVITY,results/timelines.csv
+M-34,"Importer funds committed before Bank O credit — matched scope, normal, base (days)",9.25,,sim days,ASSUMPTION-DRIVEN MODEL — SENSITIVITY,results/timelines.csv

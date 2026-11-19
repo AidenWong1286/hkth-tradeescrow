@@ -1,0 +1,16 @@
+metric,value
+trades,200
+commands,5312
+accepted,2206
+rejected,3106
+invariant_checks,5935
+violations,0
+harness_errors,0
+final_state::Frozen,64
+final_state::No escrow,15
+final_state::Pending,26
+final_state::Refunded/Terminated,30
+final_state::Released,57
+final_state::Under Review,8
+seed,3002
+steps_per_trade,30

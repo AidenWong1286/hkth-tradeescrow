@@ -1,0 +1,26 @@
+digraph A { rankdir=TB; newrank=true; compound=true; size="13.33,7.5"; ratio=fill; pad=0.2;
+fontname="Helvetica-Bold"; fontsize=20; nodesep=0.3; ranksep=0.45;
+labelloc=t; label="Architecture and trust boundaries";
+node [shape=box style="rounded,filled" fontname="Helvetica" fontsize=17 fillcolor="#ffffff" color="#94a3b8" margin="0.15,0.06"];
+edge [fontname="Helvetica" fontsize=14 color="#475569" fontcolor="#334155" penwidth=1.6];
+subgraph cluster_users { label="Seven participants (role-selected; server-side RBAC)"; fontsize=18; style="rounded,filled"; fillcolor="#f1f5f9"; color="#94a3b8";
+  imp [label="HK importer"]; exp [label="Thai exporter"]; bh [label="Bank H\n(ops + compliance)"]; bo [label="Thai Bank O\n(observer)"];
+  log [label="Logistics provider"]; cus [label="Customs authority"]; reg [label="Regulator\n(read-only audit)"];
+  {rank=same; imp; exp; bh; bo;} {rank=same; log; cus; reg;} imp -> log [style=invis]; exp -> cus [style=invis]; bh -> reg [style=invis]; }
+subgraph cluster_ui { label="Presentation (same service layer)"; fontsize=18; style="rounded,filled"; fillcolor="#eef6ff"; color="#60a5fa";
+  st [label="Streamlit app"]; fl [label="Flask console\n(verified, fallback demo)"]; }
+subgraph cluster_core { label="Escrow service layer — simulated smart contract (Bank H)"; fontsize=18; style="rounded,filled"; fillcolor="#ecfdf5"; color="#10b981";
+  rbac [label="Command authorisation\n(PERMISSIONS, party scope)"]; sm [label="Six-state machine\n+ release guard" penwidth=2.5 color="#0f766e"];
+  tok [label="Token accounting\nTDEP-HKD@Bank H\n(integer cents, conservation)"]; jr [label="Append-only journal\nSHA-256 hash chain"];
+  views [label="Role projections\n& audit export"]; }
+subgraph cluster_off { label="Off-chain attestation modules\n(SIMULATED — trust boundary)"; fontsize=18; fontcolor="#c2410c"; style="rounded,filled,dashed"; fillcolor="#fff7ed"; color="#f97316"; penwidth=2;
+  docm [label="Document matching\n(contract, invoice,\nB/L, customs)"]; kyc [label="KYC/AML screening\n(creation + pre-release,\n48h)"]; ship [label="Shipment attestation\n(logistics)"]; }
+db [shape=cylinder label="SQLite mock\npermissioned ledger" fillcolor="#f8fafc"];
+ext [label="e-HKD extension (conceptual)\n2-phase commit: tokenised deposits\n⇄ CeBM mock — all-or-nothing" style="rounded,filled,dashed" fillcolor="#eef2ff" color="#6366f1"];
+nolive [label="NOT CONNECTED: real banks,\nHKMA e-HKD, EnsembleTX, mBridge,\nreal KYC/AML, customs, FX" shape=note fillcolor="#fef2f2" color="#ef4444" fontcolor="#991b1b"];
+reg -> st [ltail=cluster_users lhead=cluster_ui]; st -> rbac [lhead=cluster_core ltail=cluster_ui label="commands / reads"];
+rbac -> sm; sm -> tok [label="lock / release\n/ refund"]; sm -> jr [label="every accepted\n& rejected command"]; jr -> views;
+ship -> sm [label="attestation\n(PASS/FAIL)"]; docm -> sm [label="attestation\n(digest-pinned)"]; kyc -> sm [label="PASS / ALERT\n→ hold"];
+tok -> db; jr -> db; sm -> ext [style=dashed label="post-release\nillustration"]; {rank=same; db; ext; nolive;}
+{rank=same; rbac; docm; kyc; ship;}
+}

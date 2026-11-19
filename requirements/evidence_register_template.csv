@@ -1,0 +1,3 @@
+﻿claim_id,claim_text,claim_type,test_or_source_id,run_manifest,revision_sha,evidence_path,unit_or_denominator,used_in_report,used_in_slide,status
+CLAIM-EXAMPLE-001,To be replaced with observed manual steps,SIMULATION_RESULT,TC-001,,,results/metrics.csv,,,,DRAFT_PLACEHOLDER
+CLAIM-EXAMPLE-002,To be replaced with a release-blocking proof,SIMULATION_RESULT,TC-003,,,results/events/TC-003.jsonl,,,,DRAFT_PLACEHOLDER
