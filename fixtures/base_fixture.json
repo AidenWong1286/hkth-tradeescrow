@@ -1,0 +1,57 @@
+{
+  "fixture_version": "FX-2026.11.07-v1",
+  "note": "Synthetic data only. Entity names, IDs and amounts are invented for testing; no real persons, companies or accounts.",
+  "principals": [
+    {"principal_id": "u_importer_01", "role": "IMPORTER", "entity_id": "importer_hk_01", "display": "Harbour Kitchenware Ltd (synthetic HK importer)"},
+    {"principal_id": "u_importer_02", "role": "IMPORTER", "entity_id": "importer_hk_02", "display": "Kowloon Fresh Foods Ltd (synthetic HK importer #2)"},
+    {"principal_id": "u_exporter_01", "role": "EXPORTER", "entity_id": "exporter_th_01", "display": "Chao Phraya Ceramics Co (synthetic Thai exporter)"},
+    {"principal_id": "u_bank_hk_ops", "role": "BANK_HK", "entity_id": "bank_hk_h", "display": "Bank H escrow operations officer"},
+    {"principal_id": "u_bank_hk_compliance", "role": "BANK_HK_COMPLIANCE", "entity_id": "bank_hk_h", "display": "Bank H compliance officer"},
+    {"principal_id": "u_bank_th", "role": "BANK_TH", "entity_id": "bank_th_o", "display": "Bank O (Thailand) relationship officer"},
+    {"principal_id": "u_logistics", "role": "LOGISTICS", "entity_id": "logistics_l", "display": "Logistics provider L operations"},
+    {"principal_id": "u_customs", "role": "CUSTOMS", "entity_id": "customs_c", "display": "Customs authority C officer (synthetic)"},
+    {"principal_id": "u_regulator", "role": "REGULATOR", "entity_id": "regulator_r", "display": "Regulator R audit analyst (synthetic)"},
+    {"principal_id": "svc_documents", "role": "SVC_DOCUMENTS", "entity_id": "bank_hk_h", "display": "Document-matching service (simulated)"},
+    {"principal_id": "svc_compliance", "role": "SVC_COMPLIANCE", "entity_id": "bank_hk_h", "display": "KYC/AML screening service (simulated)"},
+    {"principal_id": "svc_contract", "role": "SYSTEM_CONTRACT", "entity_id": "bank_hk_h", "display": "Escrow contract engine (simulated)"}
+  ],
+  "parties": [
+    {"party_id": "importer_hk_01", "jurisdiction": "HK", "kyc_status": "VERIFIED", "kyc_valid_until": "2027-06-30", "expected_max_trade_minor": 100000000},
+    {"party_id": "importer_hk_02", "jurisdiction": "HK", "kyc_status": "VERIFIED", "kyc_valid_until": "2027-06-30", "expected_max_trade_minor": 100000000},
+    {"party_id": "exporter_th_01", "jurisdiction": "TH", "kyc_status": "VERIFIED", "kyc_valid_until": "2027-03-31", "expected_max_trade_minor": 100000000}
+  ],
+  "issuance_minor": {"importer_hk_01": 40000000, "importer_hk_02": 10000000, "exporter_th_01": 0},
+  "trade": {
+    "trade_id": "TR-001", "buyer_id": "importer_hk_01", "seller_id": "exporter_th_01",
+    "issuer_bank_id": "bank_hk_h", "recipient_bank_id": "bank_th_o", "currency": "HKD",
+    "amount_minor": 25000000, "invoice_id": "INV-001", "bill_of_lading_id": "BL-001",
+    "shipment_id": "SH-001", "customs_declaration_id": "CUS-001",
+    "contract_terms": "FOB Laem Chabang; 5,000 boxes stoneware dinner sets; ship by 2026-11-20",
+    "goods_summary": "Stoneware dinner sets"
+  },
+  "contract": {
+    "contract_id": "CT-001", "buyer_id": "importer_hk_01", "seller_id": "exporter_th_01",
+    "goods_description": "Stoneware dinner sets, 16-piece", "hs_code": "6912.00", "quantity": 5000, "unit": "box",
+    "unit_price_minor": 5000, "amount_minor": 25000000, "currency": "HKD", "incoterm": "FOB",
+    "port_of_loading": "THLCH", "port_of_discharge": "HKHKG", "latest_shipment_date": "2026-11-20"
+  },
+  "invoice": {
+    "invoice_id": "INV-001", "buyer_id": "importer_hk_01", "seller_id": "exporter_th_01",
+    "goods_description": "Stoneware dinner sets, 16-piece", "hs_code": "6912.00", "quantity": 5000,
+    "amount_minor": 25000000, "currency": "HKD", "issue_date": "2026-11-04"
+  },
+  "bill_of_lading": {
+    "bl_id": "BL-001", "shipment_id": "SH-001", "shipper_id": "exporter_th_01", "consignee_id": "importer_hk_01",
+    "goods_description": "Stoneware dinner sets, 16-piece", "quantity": 5000, "port_of_loading": "THLCH",
+    "port_of_discharge": "HKHKG", "on_board_date": "2026-11-05", "vessel": "MV SYNTHETIC STAR"
+  },
+  "customs_declaration": {
+    "declaration_id": "CUS-001", "exporter_id": "exporter_th_01", "hs_code": "6912.00",
+    "goods_description": "Stoneware dinner sets, 16-piece", "quantity": 5000,
+    "declared_value_minor": 25000000, "currency": "HKD", "port": "THLCH"
+  },
+  "shipment_event": {
+    "trade_id": "TR-001", "shipment_id": "SH-001", "bl_id": "BL-001", "status": "SHIPPED_ON_BOARD",
+    "on_board_date": "2026-11-05", "vessel": "MV SYNTHETIC STAR"
+  }
+}

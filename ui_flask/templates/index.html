@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+{# monochrome: colour only as a signal (teal = released, red = frozen / under review) #}
+{% set SC = {"Created":"var(--ink)","Pending":"var(--ink)","Under Review":"var(--red-hi)","Frozen":"var(--red-hi)","Released":"var(--teal-hi)","Refunded/Terminated":"var(--ink)"} %}
+{% set POS = {"Created":(60,55),"Pending":(320,55),"Released":(690,55),"Under Review":(190,145),"Frozen":(470,145),"Refunded/Terminated":(690,145)} %}
+{% set EDGES = {
+  "Created|Pending":"M60,55 L320,55",
+  "Pending|Released":"M320,55 L690,55",
+  "Created|Under Review":"M60,55 Q90,145 190,145",
+  "Pending|Under Review":"M320,55 L190,145",
+  "Created|Frozen":"M60,55 C210,95 350,145 470,145",
+  "Pending|Frozen":"M320,55 L470,145",
+  "Under Review|Frozen":"M190,145 L470,145",
+  "Under Review|Refunded/Terminated":"M190,145 C320,200 590,200 690,145",
+  "Frozen|Refunded/Terminated":"M470,145 L690,145"} %}
+{% set NEG = ["exp_try_clear","reg_try_release","ship_wrong"] %}
+{% set EXC = ["ACTIVE_HOLD","ESCROW_FROZEN","ESCROW_UNDER_REVIEW"] %}
+{# red is reserved for refusals and exceptions: in the live view an unmet check is "waiting", not failed #}
+{% macro gcls(g, mode) %}{% if not g %}{% elif g.ok %}ok{% elif mode=='event' or g.code in EXC %}bad{% endif %}{% endmacro %}
+{% block body %}
+<div class="shell" id="app">
+<script type="application/json" id="snap">{{ snap|tojson }}</script>
+
+<aside class="rail">
+  <section class="panel">
+    <h2>Viewing as</h2>
+    <p class="sub">Each participant sees a different projection of the same escrow.</p>
+    <div class="people">
+    {% for x in principals %}
+      <form method="post" action="/as"><input type="hidden" name="principal" value="{{ x.principal_id }}">
+        <button class="person {{ 'on' if x.principal_id==p.principal_id }}" data-lens>
+          <span class="mono-badge">{{ mono_role[x.role] }}</span>
+          <span><span class="name">{{ short_role[x.role] }}{% if x.principal_id=='u_importer_02' %} #2{% endif %}</span><span class="pid">{{ x.principal_id }}</span></span>
+        </button></form>
+    {% endfor %}
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Actions for {{ short_role[p.role] }}</h2>
+    <p class="sub">Every action runs as {{ p.principal_id }} and is authorised by the engine.</p>
+    <div class="acts">
+    {% for a, spec in actions %}<form method="post" action="/act/{{a}}"><button class="act {{ 'neg' if a in NEG }}"><b>{{ spec[0] }}</b>{% if spec[2] %}<small>{{ spec[2] }}</small>{% endif %}</button></form>{% endfor %}
+    {% if not actions %}<p class="sub">This role has no commands.</p>{% endif %}
+    </div>
+  </section>
+
+  {% if demo_controls %}
+  <section class="panel">
+    <h2>Simulation controls</h2>
+    <p class="sub">Operator only, served to localhost.</p>
+    <div class="ops">
+      <form method="post" action="/sim/reset">
+        <select name="variant" aria-label="Scenario fixture">{% for k,v in variants.items() %}<option value="{{k}}" {{'selected' if k==variant}}>{{v}}</option>{% endfor %}</select>
+        <button class="btn block" style="margin-top:8px">Reset ledger with this scenario</button></form>
+      <div class="row2">
+        <form method="post" action="/sim/aml"><button class="btn block" title="Adds the exporter to a synthetic watchlist">Inject AML hit</button></form>
+        <form method="post" action="/sim/advance"><input type="hidden" name="hours" value="24"><button class="btn block">Clock +24h</button></form>
+      </div>
+      <div class="row2">
+        <form method="post" action="/sim/tamper"><button class="btn block" title="Edits one stored journal event without re-hashing">Tamper journal</button></form>
+        <form method="post" action="/sim/autoplay"><input type="hidden" name="variant" value="{{variant}}"><button class="btn block" title="Replays the whole scenario at once">Skip to end</button></form>
+      </div>
+      <p class="note">Use the player at the bottom to replay a scenario step by step.</p>
+    </div>
+  </section>
+  {% endif %}
+</aside>
+
+<div class="stack">
+  {# ------------------------------------------------ the trade corridor #}
+  {% set terminal = state in ['Released','Refunded/Terminated'] %}
+  {% if terminal and guard_event %}{% set gsrc, gmode = guard_event.gates, 'event' %}
+  {% elif guard_live %}{% set gsrc, gmode = guard_live.gates, 'live' %}
+  {% elif guard_event %}{% set gsrc, gmode = guard_event.gates, 'event' %}
+  {% else %}{% set gsrc, gmode = none, 'none' %}{% endif %}
+  {% set gmap = {} %}{% if gsrc %}{% for g in gsrc %}{% set _ = gmap.update({g.gate: g}) %}{% endfor %}{% endif %}
+
+  <section class="panel stage" id="stage">
+    <div class="stage-head">
+      <div>
+        <h1>Escrow ESC-001 for trade TR-001</h1>
+        {% if state %}<p>{{ state_defs[state] }}</p>
+        {% elif view_error %}<p>This participant is not a party to TR-001.</p>
+        {% else %}<p>No escrow yet. View as the HK importer and create it to lock the funds.</p>{% endif %}
+        <div class="stateword {{ 'empty' if not state }}" id="stateword" data-state="{{ state or '' }}"><span>{{ state if state else ('No access' if view_error else 'Not started') }}</span>{% if state %}<i class="sig"></i>{% endif %}</div>
+      </div>
+      <div class="integrity">
+        <span class="chip {{ '' if supply.ok else 'bad' }}" title="Sum of balances equals issued supply"><i></i>Ledger balanced</span>
+        <span class="chip {{ '' if journal.ok else 'bad' }}" id="chainchip"><i></i>{{ 'Journal chain intact' if journal.ok else 'Chain broken at '+journal.first_bad_event }}</span>
+      </div>
+    </div>
+
+    <div class="corridor">
+      <div class="vault" id="vault-importer">
+        <div class="vault-top"><span class="flag">HK</span><div><b>Importer, Hong Kong</b><span>importer_hk_01</span></div></div>
+        {% if corridor.importer is not none %}
+          <div class="amt"><span class="ccy">HKD</span><span class="v" id="v-importer" data-k="importer" data-amt="{{ corridor.importer }}">{{ corridor.importer|hkd0 }}</span></div>
+          <div class="foot">Tokenised deposit at Bank H</div>
+        {% else %}<div class="redact" id="v-importer">Balance hidden from this role</div>{% endif %}
+      </div>
+      <div class="lane" id="lane-in"><svg viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M0,20 L100,20"/></svg></div>
+
+      <div class="ring {{ 'open' if state=='Released' }}" id="ring">
+        <svg viewBox="0 0 250 250" aria-hidden="true"><circle class="track" cx="125" cy="125" r="112"/>
+        {% for gname in gate_labels %}{% set g = gmap.get(gname) %}
+          <circle class="seg {{ gcls(g, gmode) }}" data-gate="{{ gname }}" cx="125" cy="125" r="112" pathLength="700"
+            stroke-dasharray="84 616" stroke-dashoffset="{{ -(loop.index0*100) - 8 }}"/>
+        {% endfor %}
+        </svg>
+        <div class="core" id="v-escrow-box">
+          {% if corridor.escrow is not none %}
+            <span class="lbl">{{ 'Released' if state=='Released' else ('Refunded' if state=='Refunded/Terminated' else 'Locked in escrow') }}</span>
+            <span class="v" id="v-escrow" data-k="escrow" data-amt="{{ corridor.escrow }}">{{ corridor.escrow|hkd0 }}</span>
+            <span class="ccy">HKD{% if state=='Released' and corridor.amount %}, {{ corridor.amount|hkd0 }} paid out{% endif %}</span>
+          {% elif not exists %}<span class="lbl">Escrow</span><span class="hidden" id="v-escrow">Not created yet</span>
+          {% else %}<span class="lbl">Escrow</span><span class="hidden" id="v-escrow">Amount hidden from this role</span>{% endif %}
+        </div>
+      </div>
+
+      <div class="lane" id="lane-out"><svg viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M0,20 L100,20"/></svg></div>
+      <div class="vault" id="vault-exporter">
+        <div class="vault-top"><span class="flag">TH</span><div><b>Exporter, Thailand</b><span>exporter_th_01</span></div></div>
+        {% if corridor.exporter is not none %}
+          <div class="amt"><span class="ccy">HKD</span><span class="v" id="v-exporter" data-k="exporter" data-amt="{{ corridor.exporter }}">{{ corridor.exporter|hkd0 }}</span></div>
+          <div class="foot">Paid in Bank H tokens; Bank O observes</div>
+        {% else %}<div class="redact" id="v-exporter">Balance hidden from this role</div>{% endif %}
+      </div>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--ink)"></i>Check passed</span>
+      <span><i style="background:var(--red-hi)"></i>Check failed or refused</span>
+      <span><i style="background:var(--orb);height:6px;width:6px;border-radius:50%;box-shadow:0 0 8px var(--orb-glow)"></i>HKD tokens</span>
+      <span class="muted">The ring is the 7-check release guard. Funds move only when all seven segments are solid.</span>
+    </div>
+  </section>
+
+  <div class="cols">
+    {# ------------------------------------------------ lifecycle #}
+    <section class="panel metro" id="metro">
+      <h2>Lifecycle</h2>
+      <p class="sub">Six states and the transitions the engine permits. The solid line is the path this escrow took.</p>
+      <svg viewBox="0 0 760 200" role="img" aria-label="Escrow lifecycle; current state {{ state or 'none' }}">
+        {% for k, d in EDGES.items() %}<path class="edge" d="{{ d }}" data-edge="{{ k }}"/>{% endfor %}
+        {% for i in range(1, path|length) %}{% set a, b = path[i-1], path[i] %}
+          {% set k = a ~ '|' ~ b %}{% set kr = b ~ '|' ~ a %}
+          {% if k in EDGES %}<path class="trail" d="{{ EDGES[k] }}" data-from="{{a}}" data-to="{{b}}"/>
+          {% elif kr in EDGES %}<path class="trail" d="{{ EDGES[kr] }}" data-from="{{a}}" data-to="{{b}}" data-rev="1"/>{% endif %}
+        {% endfor %}
+        {% for s in states %}{% set xy = POS[s] %}
+          <g class="node {{ 'now' if s==state }} {{ 'seen' if s in path }}" style="--nc:{{ SC[s] }}" data-state="{{ s }}" transform="translate({{xy[0]}},{{xy[1]}})">
+            <circle class="halo" r="10"/><circle class="dot" r="10"/>
+            <text y="{{ -20 if xy[1] < 100 else 32 }}" text-anchor="middle">{{ s }}</text>
+          </g>
+        {% endfor %}
+      </svg>
+      {% if state %}<p class="statedef"><b>{{ state }}.</b> {{ state_defs[state] }}</p>{% endif %}
+    </section>
+
+    {# ------------------------------------------------ release guard #}
+    <section class="panel" id="guard">
+      <h2>Release guard</h2>
+      <p class="sub">
+        {% if gmode=='live' %}Live evaluation (Bank H view). Updates as each check is met.
+        {% elif gmode=='event' %}As recorded in journal event {{ guard_event.id }} at the {{ 'successful release' if guard_event.ok else 'refused release attempt' }}.
+        {% elif view_error or events_error %}This role cannot see the release guard.
+        {% else %}No release attempt yet. Bank H sees the live checks.{% endif %}
+      </p>
+      <ul class="gates">
+      {% for gname, glabel in gate_labels.items() %}{% set g = gmap.get(gname) %}
+        {% set c = gcls(g, gmode)|trim %}
+        <li class="{{ c if c else ('wait' if g else 'pending') }}" data-gate="{{ gname }}">
+          <span class="d">{{ '✓' if c=='ok' else ('✕' if c=='bad' else '') }}</span>{{ glabel }}
+          {% if g and not g.ok and g.code %}<span class="c">{{ g.code }}</span>{% endif %}</li>
+      {% endfor %}
+      </ul>
+      {% if gmode=='live' and not terminal %}
+        <div class="verdict {{ 'ok' if guard_live.ok else ('bad' if guard_live.code in EXC else 'idle') }}">{{ 'Release permitted: all 7 checks pass' if guard_live.ok else ('Release blocked: ' if guard_live.code in EXC else 'Waiting: ') ~ code_text(guard_live.code)|replace('Release refused: ','') }}</div>
+      {% elif gmode=='event' %}
+        <div class="verdict {{ 'ok' if guard_event.ok else 'bad' }}">{{ 'Released: all 7 checks passed' if guard_event.ok else code_text(guard_event.reason) }}</div>
+      {% elif terminal %}<div class="verdict idle">Escrow closed ({{ state }}). No further release is possible.</div>
+      {% else %}<div class="verdict idle">Waiting for checks</div>{% endif %}
+      {% if view and view.holds %}<p class="sub" style="margin:12px 0 0">Compliance holds: {% for h in view.holds %}<span class="mono">{{h.hold_id}}</span> {{h.reason_code}} ({{h.status}}){{ ', ' if not loop.last }}{% endfor %}</p>{% endif %}
+    </section>
+  </div>
+
+    {# ------------------------------------------------ hash chain #}
+    <section class="panel" id="chainpanel">
+      <h2>Hash-chained journal</h2>
+      {% if events_error %}<div class="denied"><b>✕ No access</b><span>This role cannot read the audit trail (least privilege).</span></div>
+      {% elif events %}
+        <p class="sub">Each event stores the hash of the one before it. Editing any stored event breaks every link after it.</p>
+        {% set ns = namespace(broken=false) %}
+        <div class="chain" id="chain">
+        {% for e in events %}{% if not journal.ok and e.event_id == journal.first_bad_event %}{% set ns.broken = true %}{% endif %}
+          <div class="blk {{ 'rej' if e.outcome=='REJECTED' }} {{ 'broken' if ns.broken }}" data-id="{{ e.event_id }}" title="{{ e.event_id }} {{ e.reason_code }}">
+            <div class="op">{{ e.operation|replace('_',' ')|lower|capitalize }}</div>
+            <div class="h">{{ e.hash[:8] }}</div></div>
+        {% endfor %}
+        </div>
+        {% if not journal.ok %}<p class="bad" style="margin:6px 0 0;font-size:13px">Verification failed at {{ journal.first_bad_event }} ({{ journal.problem|replace('_',' ')|lower }}). Reset the ledger to restore it.</p>{% endif %}
+      {% else %}<p class="sub">No events yet.</p>{% endif %}
+    </section>
+
+    {# ------------------------------------------------ role lens #}
+    <section class="panel" id="lens" style="position:relative">
+      <h2>What {{ short_role[p.role] }} can see</h2>
+      {% if view_error %}<div class="denied"><b>✕ {{ view_error }}</b><span>{{ p.principal_id }} is not a party to TR-001. The refused read was written to the journal.</span></div>
+      {% elif view %}
+        <p class="sub">Hatched fields exist on the trade but are outside this role's projection.</p>
+        <div class="fields">
+        {% for k in ["trade_id","buyer_id","seller_id","recipient_bank_id","amount_minor","locked_minor","contract_terms","shipment_id","bill_of_lading_id","customs_declaration_id"] %}
+          {% if k in view %}<div class="field"><div class="k">{{ k }}</div><div class="val {{ 'mono' if k.endswith('_id') }}">{{ view[k]|hkd if k.endswith('_minor') else view[k] }}</div></div>
+          {% else %}<div class="field hid"><div class="k">{{ k }}</div><div class="val"></div></div>{% endif %}
+        {% endfor %}
+        {% if 'my_balance_minor' in view %}<div class="field"><div class="k">my token balance</div><div class="val mono">{{ view.my_balance_minor|hkd }}</div></div>{% endif %}
+        </div>
+        {% if view.attestations %}<div class="attest">{% for a in view.attestations %}<span class="{{ 'pass' if a.result=='PASS' else 'fail' }} {{ 'rev' if a.get('revoked') }}" title="{{ a.attestation_id }}">{{ {'KYC_AML':'KYC/AML','SHIPMENT':'Shipment','DOCUMENTS':'Documents','CUSTOMS':'Customs'}.get(a.type, a.type) }}{% if a.checkpoint %} ({{ a.checkpoint|lower|replace('_','-') }}){% endif %}: {{ a.result }}</span>{% endfor %}</div>{% endif %}
+        {% if view.documents %}<table class="tbl" style="margin-top:12px"><tr><th>Document</th><th>Revision</th><th>Digest</th>{% if view.documents[0].content %}<th>Amount</th>{% endif %}</tr>
+        {% for d in view.documents %}<tr><td>{{ d.doc_type|replace('_',' ')|lower|capitalize }}</td><td>r{{ d.revision }}</td><td class="mono">{{ d.digest[:12] }}…</td>{% if d.content %}<td class="mono">{{ (d.content.amount_minor or d.content.declared_value_minor)|hkd if (d.content.amount_minor or d.content.declared_value_minor) else '' }}</td>{% endif %}</tr>{% endfor %}</table>{% endif %}
+      {% else %}<p class="sub">Nothing to show until the escrow exists.</p>{% endif %}
+    </section>
+
+
+  {# ------------------------------------------------ audit trail #}
+  <section class="panel" id="audit">
+    <h2>Audit trail visible to {{ short_role[p.role] }}{% if not events_error %} ({{ events|length }} events){% endif %}</h2>
+    {% if events_error %}<p class="sub">{{ events_error }}: no audit-trail access for this role (least privilege).</p>
+    {% else %}
+    <div class="scroll"><table class="tbl"><tr><th>Event</th><th>Sim time</th><th>Actor</th><th>Operation</th><th>Outcome</th><th>State</th><th>Reason</th><th>Amount</th><th>Hash</th></tr>
+    {% for e in events|reverse %}<tr class="{{ 'rej' if e.outcome=='REJECTED' }}" data-id="{{ e.event_id }}"><td class="mono">{{e.event_id}}</td><td class="mono">{{e.ts[5:16].replace('T',' ')}}</td><td>{{ e.get('actor_id', e.actor_role) }}</td><td>{{e.operation}}</td><td class="{{ 'ok' if e.outcome=='ACCEPTED' else 'bad' }}">{{e.outcome}}</td><td>{{ (e.prior_state or '∅') ~ ' → ' ~ (e.new_state or '∅') if e.prior_state!=e.new_state else (e.new_state or '') }}</td><td class="mono">{{e.reason_code}}</td><td class="mono">{{ e.amount_minor|hkd if e.amount_minor else '' }}</td><td class="mono">{{e.hash[:8]}}</td></tr>{% endfor %}</table></div>{% endif %}
+  </section>
+</div>
+
+{% if flash %}<div class="toast {{ flash.kind }}" role="status"><span class="ico">{{ '✓' if flash.kind=='good' else ('!' if flash.kind=='warn' else '✕') }}</span><div><b>{{ flash.text }}</b><small>{{ flash.code }} · {{ flash.msg }}</small></div></div>{% endif %}
+</div>
+
+{% if demo_controls %}
+<div class="film" id="film">
+  <button class="play" id="filmplay" aria-label="Play scenario step by step">▶</button>
+  <div class="cap"><b id="filmcap">Play a scenario step by step</b><span id="filmsub">Each step runs as its real participant. Space bar plays or pauses.</span></div>
+  <div class="dots" id="filmdots"></div>
+  <button class="cine" id="cinema" type="button" aria-pressed="false" title="Hide the side rail for recording (C)">Cinema</button>
+  <select id="filmvar" aria-label="Scenario to play">{% for k,v in variants.items() %}<option value="{{k}}" {{'selected' if k==variant}}>{{ v.split(' ')[0] }} {{ {'clean':'clean trade','mismatch':'document mismatch','aml':'AML alert'}[k] }}</option>{% endfor %}</select>
+  <script type="application/json" id="filmsteps">{{ film|tojson }}</script>
+</div>
+{% endif %}
+{% endblock %}

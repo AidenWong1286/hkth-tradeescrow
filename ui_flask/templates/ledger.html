@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="page">
+{% if error %}
+<section class="panel"><h2>Ledger and journal</h2>
+  <div class="denied"><b>✕ {{ error }}</b><span>{{ role_labels.get(p.role, p.role) }} has no access to token accounts or the ledger journal. The refused read was recorded in the audit journal (READ / REJECTED).</span></div>
+</section>
+{% else %}
+<section class="panel stage">
+  <div class="stage-head">
+    <div><h1>Ledger and journal</h1>
+      <p>Projection for {{ role_labels.get(p.role, p.role) }}: <b>{{ {'full':'Bank H full ledger view','own':'own accounts and own-trade events only','metadata':'metadata only (no balances, no commercial details)'}[lv.scope] }}</b>.</p></div>
+    <div class="integrity">
+      <span class="chip {{ '' if lv.integrity.conservation_ok else 'bad' }}"><i></i>Conservation {{ 'OK' if lv.integrity.conservation_ok else 'FAIL' }}</span>
+      <span class="chip {{ '' if lv.integrity.hash_chain_ok else 'bad' }}"><i></i>Hash chain {{ 'intact' if lv.integrity.hash_chain_ok else 'BROKEN' }}</span>
+    </div>
+  </div>
+  {% if lv.scope != 'metadata' %}
+  <div class="fields" style="margin-top:14px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))">
+    {% for a in lv.accounts %}<div class="vault" style="min-height:0">
+      <div class="vault-top"><span class="flag">{{ a.owner_id[:2]|upper }}</span><div><b>{{ a.owner_id }}</b><span>{{ a.account_id }}</span></div></div>
+      <div class="amt"><span class="ccy">HKD</span><span class="v" style="font-size:28px">{{ a.balance_minor|hkd0 }}</span></div>
+      <div class="foot mono">{{ a.instrument }}</div></div>{% endfor %}
+  </div>
+  {% if lv.supply %}<p class="sub" style="margin:14px 0 0">Holder total {{ lv.supply.holder_total|hkd }} = issued {{ lv.supply.issued_supply|hkd }}; postings reconcile: {{ lv.supply.postings_reconcile }}; escrow mismatches: {{ lv.supply.escrow_mismatches or 'none' }}.</p>{% endif %}
+  {% else %}<p class="sub" style="margin-top:12px">No balances are shown to this role. Integrity flags and event metadata only.</p>{% endif %}
+</section>
+
+{% if lv.journal %}<section class="panel"><h2>Journal integrity</h2>
+  <p class="sub">Each event stores SHA-256(previous hash + canonical event). Any edit, deletion or reordering of a stored event breaks verification (tamper-evident demonstration, not a distributed consensus ledger).</p>
+  <p class="mono" style="word-break:break-all;margin:0;color:var(--ink-2)">{{ lv.journal }}</p></section>{% endif %}
+
+<section class="panel"><h2>Journal events visible to this role ({{ lv.events|length }})</h2>
+<div class="scroll" style="max-height:none"><table class="tbl"><tr><th>Event</th><th>Time</th>{% if lv.scope != 'metadata' %}<th>Actor</th>{% endif %}<th>Role</th><th>Kind</th><th>Operation</th><th>Outcome</th><th>Prior → new</th><th>Reason</th><th>prev</th><th>hash</th></tr>
+{% for e in lv.events %}<tr class="{{ 'rej' if e.outcome=='REJECTED' }}"><td class="mono">{{e.event_id}}</td><td class="mono">{{e.ts[5:16]}}</td>{% if lv.scope != 'metadata' %}<td>{{e.actor_id}}</td>{% endif %}<td>{{e.actor_role}}</td><td>{{e.actor_kind}}</td><td>{{e.operation}}</td><td class="{{ 'ok' if e.outcome=='ACCEPTED' else 'bad' }}">{{e.outcome}}</td><td>{{e.prior_state or '∅'}} → {{e.new_state or '∅'}}</td><td class="mono">{{e.reason_code}}</td><td class="mono">{{e.prev_hash[:8]}}</td><td class="mono">{{e.hash[:8]}}</td></tr>{% endfor %}</table></div></section>
+{% endif %}
+</div>
+{% endblock %}

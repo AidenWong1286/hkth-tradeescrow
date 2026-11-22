@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block body %}
+<main class="intro">
+  <p class="kicker"><i></i>FTEC3002 Group 1 prototype, Hong Kong to Thailand trade corridor</p>
+  <h1><span class="ln"><span>Pay when the</span></span><span class="ln"><span>goods are proven.</span></span><span class="ln"><span>Not before.</span></span></h1>
+  <p class="lede">A tokenised-deposit escrow for cross-border trade. The importer's HKD is locked at Bank H and released to the Thai exporter only when shipment, documents and two rounds of KYC/AML screening all pass, with every step written to a tamper-evident journal.</p>
+  <div class="cta"><a class="primary" href="/">Open the escrow console</a><a href="/ledger">See the ledger</a></div>
+  <div class="facts">{% for n, label in facts %}<div><b>{{ n }}</b><span>{{ label }}</span></div>{% endfor %}</div>
+</main>
+{% endblock %}
