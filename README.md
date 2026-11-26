@@ -2,6 +2,8 @@
 
 HK–TH TradeEscrow is a local demo of tokenised-deposit escrow for Hong Kong–Thailand trade. The Flask console uses synthetic trade, document and compliance data. It shows how shipment, document matching and compliance checks determine whether simulated funds are released or held.
 
+Built for the FTEC3002 FinTech group project (Group 1) at The Chinese University of Hong Kong, 2026/27.
+
 ## Run locally
 
 Use Python 3.11 or later. From the project folder, run the commands for your operating system.
